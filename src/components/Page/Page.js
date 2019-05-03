@@ -202,7 +202,7 @@ class PageComponent extends Component {
       });
     };
 
-    const intercomWidget = addIntercomWidget();
+    const intercomWidget = typeof window !== 'undefined' ? addIntercomWidget() : null;
 
     return (
       <div className={classes}>
