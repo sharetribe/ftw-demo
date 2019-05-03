@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet-async';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { injectIntl, intlShape } from '../../util/reactIntl';
 import classNames from 'classnames';
@@ -80,6 +82,8 @@ class PageComponent extends Component {
       twitterHandle,
       twitterImages,
       updated,
+      isAuthenticated,
+      currentUser,
     } = this.props;
 
     const classes = classNames(rootClassName || css.root, className, {
@@ -184,6 +188,24 @@ class PageComponent extends Component {
       });
     }
 
+    const userInfoMaybe =
+      isAuthenticated && currentUser
+        ? {
+            email: currentUser.attributes.email,
+            user_id: currentUser.id.uuid,
+            created_at: currentUser.attributes.created_at,
+          }
+        : null;
+
+    const addIntercomWidget = () => {
+      window.Intercom('boot', {
+        app_id: process.env.REACT_APP_INTERCOM_APP_ID,
+        ...userInfoMaybe,
+      });
+    };
+
+    const intercomWidget = addIntercomWidget();
+
     return (
       <div className={classes}>
         <Helmet
@@ -209,6 +231,7 @@ class PageComponent extends Component {
         >
           {children}
         </div>
+        {intercomWidget}
       </div>
     );
   }
@@ -277,7 +300,24 @@ PageComponent.propTypes = {
   intl: intlShape.isRequired,
 };
 
-const Page = injectIntl(withRouter(PageComponent));
+const mapStateToProps = state => {
+  // Intercom widget needs isAuthenticated
+  const { isAuthenticated } = state.Auth;
+  const { currentUser } = state.user;
+
+  return {
+    isAuthenticated,
+    currentUser,
+  };
+};
+
+const Page = injectIntl(
+  compose(
+    withRouter,
+    connect(mapStateToProps)
+  )(PageComponent)
+);
+
 Page.displayName = 'Page';
 
 export default Page;
