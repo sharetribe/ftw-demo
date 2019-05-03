@@ -123,9 +123,10 @@ class TopbarComponent extends Component {
       }
 
       // Shutdown Intercom
-      window.Intercom('shutdown');
-      window.Intercom('boot', { app_id: process.env.REACT_APP_INTERCOM_APP_ID });
-
+      if (typeof window !== 'undefined') {
+        window.Intercom('shutdown');
+        window.Intercom('boot', { app_id: process.env.REACT_APP_INTERCOM_APP_ID });
+      }
       console.log('logged out'); // eslint-disable-line
     });
   }
