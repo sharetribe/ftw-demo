@@ -49,7 +49,7 @@ class PageComponent extends Component {
     this.setState({ intercomWidget });
   }
 
-  addIntercomWidget = props => {
+  addIntercomWidget = () => {
     const { isAuthenticated, currentUser } = this.props;
     const userInfoMaybe =
       isAuthenticated && currentUser
@@ -59,10 +59,12 @@ class PageComponent extends Component {
           }
         : null;
 
-    window.Intercom('boot', {
+    const data = {
       app_id: process.env.REACT_APP_INTERCOM_APP_ID,
       ...userInfoMaybe,
-    });
+      Flex_demo: true,
+    };
+    window.Intercom('boot', data);
   };
 
   componentWillUnmount() {
