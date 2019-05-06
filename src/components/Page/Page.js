@@ -35,6 +35,7 @@ class PageComponent extends Component {
     // Keeping scrollPosition out of state reduces rendering cycles (and no bad states rendered)
     this.scrollPosition = 0;
     this.contentDiv = null;
+    this.state = { intercomWidget: null };
   }
 
   componentDidMount() {
@@ -44,7 +45,25 @@ class PageComponent extends Component {
     // handling both dragover and drop events.
     document.addEventListener('dragover', preventDefault);
     document.addEventListener('drop', preventDefault);
+    const intercomWidget = this.addIntercomWidget(this.props);
+    this.setState({ intercomWidget });
   }
+
+  addIntercomWidget = props => {
+    const { isAuthenticated, currentUser } = this.props;
+    const userInfoMaybe =
+      isAuthenticated && currentUser
+        ? {
+            email: currentUser.attributes.email,
+            user_id: currentUser.id.uuid,
+          }
+        : null;
+
+    window.Intercom('boot', {
+      app_id: process.env.REACT_APP_INTERCOM_APP_ID,
+      ...userInfoMaybe,
+    });
+  };
 
   componentWillUnmount() {
     document.removeEventListener('dragover', preventDefault);
@@ -81,8 +100,6 @@ class PageComponent extends Component {
       twitterHandle,
       twitterImages,
       updated,
-      isAuthenticated,
-      currentUser,
     } = this.props;
 
     const classes = classNames(rootClassName || css.root, className, {
@@ -186,24 +203,6 @@ class PageComponent extends Component {
       });
     }
 
-    const userInfoMaybe =
-      isAuthenticated && currentUser
-        ? {
-            email: currentUser.attributes.email,
-            user_id: currentUser.id.uuid,
-            created_at: currentUser.attributes.created_at,
-          }
-        : null;
-
-    const addIntercomWidget = () => {
-      window.Intercom('boot', {
-        app_id: process.env.REACT_APP_INTERCOM_APP_ID,
-        ...userInfoMaybe,
-      });
-    };
-
-    const intercomWidget = typeof window !== 'undefined' ? addIntercomWidget() : null;
-
     return (
       <div className={classes}>
         <Helmet
@@ -229,7 +228,7 @@ class PageComponent extends Component {
         >
           {children}
         </div>
-        {intercomWidget}
+        {this.state.intercomWidget}
       </div>
     );
   }
