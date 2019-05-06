@@ -35,8 +35,6 @@ class PageComponent extends Component {
     // Keeping scrollPosition out of state reduces rendering cycles (and no bad states rendered)
     this.scrollPosition = 0;
     this.contentDiv = null;
-    this.scrollingDisabledChanged = this.scrollingDisabledChanged.bind(this);
-    this.state = { intercomWidget: null };
   }
 
   componentDidMount() {
@@ -46,11 +44,17 @@ class PageComponent extends Component {
     // handling both dragover and drop events.
     document.addEventListener('dragover', preventDefault);
     document.addEventListener('drop', preventDefault);
-    const intercomWidget = this.addIntercomWidget(this.props);
-    this.setState({ intercomWidget });
+
+    const intercomData = this.getIntercomData();
+    window.Intercom('boot', intercomData);
   }
 
-  addIntercomWidget = () => {
+  componentDidUpdate() {
+    const intercomData = this.getIntercomData();
+    window.Intercom('update', intercomData);
+  }
+
+  getIntercomData = () => {
     const { isAuthenticated, currentUser } = this.props;
     const userInfoMaybe =
       isAuthenticated && currentUser
@@ -65,7 +69,8 @@ class PageComponent extends Component {
       ...userInfoMaybe,
       Flex_demo: true,
     };
-    window.Intercom('boot', data);
+
+    return data;
   };
 
   componentWillUnmount() {
@@ -232,7 +237,6 @@ class PageComponent extends Component {
         >
           {children}
         </div>
-        {this.state.intercomWidget}
       </div>
     );
   }
