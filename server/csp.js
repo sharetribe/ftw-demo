@@ -68,7 +68,6 @@ const defaultDirectives = {
     'api.mapbox.com',
     '*.google-analytics.com',
     'js.stripe.com',
-    '*.intercomcdn.com/',
   ],
   styleSrc: [self, unsafeInline, 'fonts.googleapis.com', 'api.mapbox.com'],
 };
@@ -93,12 +92,22 @@ module.exports = (reportUri, enforceSsl, reportOnly) => {
   // https://content-security-policy.com/
 
   // Example: extend default img directive with custom domain
-  // const { imgSrc = [self] } = defaultDirectives;
-  // const exampleImgSrc = imgSrc.concat('my-custom-domain.example.com');
+  const { connectSrc = [self] } = defaultDirectives;
+  const { scriptSrc = [self] } = defaultDirectives;
+  const { fontSrc = [self] } = defaultDirectives;
+
+  const intercom = ['*.intercomcdn.com/', '*.intercom.io/', '*.intercomassets.com/'];
+
+  const intercomScripts = scriptSrc.concat(intercom);
+  const intercomConnect = connectSrc.concat('*.intercom.io/');
+  const intercomFont = fontSrc.concat('*.intercomcdn.com/');
 
   const customDirectives = {
     // Example: Add custom directive override
     // imgSrc: exampleImgSrc,
+    scriptSrc: intercomScripts,
+    connectSrc: intercomConnect,
+    fontSrc: intercomFont,
   };
 
   // ================ END CUSTOM CSP URLs ================ //
