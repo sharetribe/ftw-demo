@@ -17,6 +17,7 @@ import {
   LayoutWrapperFooter,
   Footer,
   NamedRedirect,
+  TopbarNotification,
 } from '../../components';
 import { EmailVerificationForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
@@ -70,6 +71,7 @@ export const EmailVerificationPageComponent = props => {
 
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled} referrer="origin">
+      <TopbarNotification />
       <LayoutSingleColumn>
         <LayoutWrapperTopbar>
           <TopbarContainer />

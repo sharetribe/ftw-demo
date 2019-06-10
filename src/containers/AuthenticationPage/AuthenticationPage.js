@@ -27,6 +27,7 @@ import {
   Footer,
   Modal,
   TermsOfService,
+  TopbarNotification,
 } from '../../components';
 import { LoginForm, SignupForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
@@ -229,6 +230,7 @@ export class AuthenticationPageComponent extends Component {
           name: schemaTitle,
         }}
       >
+        <TopbarNotification />
         <LayoutSingleColumn>
           <LayoutWrapperTopbar>
             <TopbarContainer className={topbarClasses} />

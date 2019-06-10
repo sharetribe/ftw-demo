@@ -16,6 +16,7 @@ import {
   Footer,
   Page,
   UserNav,
+  TopbarNotification,
 } from '../../components';
 import { PayoutDetailsForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
@@ -72,6 +73,7 @@ export const PayoutPreferencesPageComponent = props => {
 
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
+      <TopbarNotification />
       <LayoutSideNavigation>
         <LayoutWrapperTopbar>
           <TopbarContainer
