@@ -15,6 +15,7 @@ import {
   LayoutWrapperFooter,
   Footer,
   NamedLink,
+  TopbarNotification,
 } from '../../components';
 import { ProfileSettingsForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
@@ -90,6 +91,7 @@ export class ProfileSettingsPageComponent extends Component {
 
     return (
       <Page className={css.root} title={title} scrollingDisabled={scrollingDisabled}>
+        <TopbarNotification />
         <LayoutSingleColumn>
           <LayoutWrapperTopbar>
             <TopbarContainer currentPage="ProfileSettingsPage" />

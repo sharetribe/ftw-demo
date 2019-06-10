@@ -9,6 +9,7 @@ import {
   LayoutWrapperFooter,
   Footer,
   ExternalLink,
+  TopbarNotification,
 } from '../../components';
 
 import css from './AboutPage.css';
@@ -29,6 +30,7 @@ const AboutPage = () => {
         name: 'About page',
       }}
     >
+      <TopbarNotification />
       <LayoutSingleColumn>
         <LayoutWrapperTopbar>
           <TopbarContainer />

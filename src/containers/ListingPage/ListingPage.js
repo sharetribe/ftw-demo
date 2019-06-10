@@ -37,6 +37,7 @@ import {
   LayoutWrapperFooter,
   Footer,
   BookingPanel,
+  TopbarNotification,
 } from '../../components';
 import { TopbarContainer, NotFoundPage } from '../../containers';
 
@@ -254,6 +255,7 @@ export class ListingPageComponent extends Component {
 
       return (
         <Page title={errorTitle} scrollingDisabled={scrollingDisabled}>
+          <TopbarNotification />
           <LayoutSingleColumn className={css.pageRoot}>
             <LayoutWrapperTopbar>{topbar}</LayoutWrapperTopbar>
             <LayoutWrapperMain>

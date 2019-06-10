@@ -14,6 +14,7 @@ import {
   LayoutWrapperFooter,
   Footer,
   TermsOfService,
+  TopbarNotification,
 } from '../../components';
 import config from '../../config';
 
@@ -47,6 +48,7 @@ const TermsOfServicePageComponent = props => {
   };
   return (
     <Page title={schemaTitle} scrollingDisabled={scrollingDisabled} schema={schema}>
+      <TopbarNotification />
       <LayoutSideNavigation>
         <LayoutWrapperTopbar>
           <TopbarContainer currentPage="TermsOfServicePage" />

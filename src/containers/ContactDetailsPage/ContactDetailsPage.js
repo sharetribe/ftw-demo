@@ -15,6 +15,7 @@ import {
   Footer,
   Page,
   UserNav,
+  TopbarNotification,
 } from '../../components';
 import { ContactDetailsForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
@@ -88,6 +89,7 @@ export const ContactDetailsPageComponent = props => {
 
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
+      <TopbarNotification />
       <LayoutSideNavigation>
         <LayoutWrapperTopbar>
           <TopbarContainer

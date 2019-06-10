@@ -16,6 +16,7 @@ import {
   LayoutWrapperMain,
   LayoutWrapperFooter,
   Footer,
+  TopbarNotification,
 } from '../../components';
 import { TopbarContainer } from '../../containers';
 
@@ -53,6 +54,7 @@ export const LandingPageComponent = props => {
         image: [schemaImage],
       }}
     >
+      <TopbarNotification />
       <LayoutSingleColumn>
         <LayoutWrapperTopbar>
           <TopbarContainer />

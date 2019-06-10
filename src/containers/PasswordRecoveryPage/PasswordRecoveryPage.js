@@ -15,6 +15,7 @@ import {
   LayoutWrapperTopbar,
   LayoutWrapperFooter,
   Footer,
+  TopbarNotification,
 } from '../../components';
 import { PasswordRecoveryForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
@@ -136,6 +137,7 @@ export const PasswordRecoveryPageComponent = props => {
 
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
+      <TopbarNotification />
       <LayoutSingleColumn>
         <LayoutWrapperTopbar>
           <TopbarContainer />

@@ -14,6 +14,7 @@ import {
   Footer,
   Page,
   UserNav,
+  TopbarNotification,
 } from '../../components';
 import { PasswordChangeForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
@@ -74,6 +75,7 @@ export const PasswordChangePageComponent = props => {
 
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
+      <TopbarNotification />
       <LayoutSideNavigation>
         <LayoutWrapperTopbar>
           <TopbarContainer

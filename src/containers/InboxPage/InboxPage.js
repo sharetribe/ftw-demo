@@ -34,6 +34,7 @@ import {
   Footer,
   IconSpinner,
   UserDisplayName,
+  TopbarNotification,
 } from '../../components';
 import { TopbarContainer, NotFoundPage } from '../../containers';
 import config from '../../config';
@@ -353,6 +354,7 @@ export const InboxPageComponent = props => {
 
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
+      <TopbarNotification />
       <LayoutSideNavigation>
         <LayoutWrapperTopbar>
           <TopbarContainer

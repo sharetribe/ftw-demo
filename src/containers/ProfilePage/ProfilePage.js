@@ -23,6 +23,7 @@ import {
   ListingCard,
   Reviews,
   ButtonTabNavHorizontal,
+  TopbarNotification,
 } from '../../components';
 import { TopbarContainer, NotFoundPage } from '../../containers';
 import { loadData } from './ProfilePage.duck';
@@ -242,6 +243,7 @@ export class ProfilePageComponent extends Component {
           name: schemaTitle,
         }}
       >
+        <TopbarNotification />
         <LayoutSideNavigation>
           <LayoutWrapperTopbar>
             <TopbarContainer currentPage="ProfilePage" />

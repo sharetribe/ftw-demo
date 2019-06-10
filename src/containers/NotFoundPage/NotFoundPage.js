@@ -14,6 +14,7 @@ import {
   LayoutWrapperMain,
   LayoutWrapperFooter,
   Footer,
+  TopbarNotification,
 } from '../../components';
 import { LocationSearchForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
@@ -47,6 +48,7 @@ export class NotFoundPageComponent extends Component {
 
     return (
       <Page title={title} scrollingDisabled={scrollingDisabled}>
+        <TopbarNotification />
         <LayoutSingleColumn>
           <LayoutWrapperTopbar>
             <TopbarContainer />
