@@ -24,6 +24,7 @@ import {
   LayoutWrapperMain,
   LayoutWrapperFooter,
   Footer,
+  TopbarNotification,
 } from '../../components';
 import { TopbarContainer } from '../../containers';
 
@@ -253,6 +254,7 @@ export const TransactionPageComponent = props => {
       title={intl.formatMessage({ id: 'TransactionPage.title' }, { title: listingTitle })}
       scrollingDisabled={scrollingDisabled}
     >
+      <TopbarNotification />
       <LayoutSingleColumn>
         <LayoutWrapperTopbar>
           <TopbarContainer />

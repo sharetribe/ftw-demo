@@ -17,6 +17,7 @@ import {
   LayoutWrapperMain,
   LayoutWrapperFooter,
   Footer,
+  TopbarNotification,
 } from '../../components';
 import { PasswordResetForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
@@ -122,6 +123,7 @@ export class PasswordResetPageComponent extends Component {
 
     return (
       <Page title={title} scrollingDisabled={scrollingDisabled} referrer="origin">
+        <TopbarNotification />
         <LayoutSingleColumn>
           <LayoutWrapperTopbar>
             <TopbarContainer />

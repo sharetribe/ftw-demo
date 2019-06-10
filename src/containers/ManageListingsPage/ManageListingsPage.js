@@ -16,6 +16,7 @@ import {
   LayoutWrapperMain,
   LayoutWrapperFooter,
   Footer,
+  TopbarNotification,
 } from '../../components';
 import { TopbarContainer } from '../../containers';
 
@@ -122,6 +123,7 @@ export class ManageListingsPageComponent extends Component {
 
     return (
       <Page title={title} scrollingDisabled={scrollingDisabled}>
+        <TopbarNotification />
         <LayoutSingleColumn>
           <LayoutWrapperTopbar>
             <TopbarContainer currentPage="ManageListingsPage" />
