@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { ExternalLink } from '../../components';
 
 import css from './TopbarNotification.css';
 
@@ -14,14 +15,12 @@ const TopbarNotification = props => {
         Wondering how Flex suits your idea? Have a call with our marketplace experts and discuss how
         to turn your ideas into reality.
       </p>
-      <a
+      <ExternalLink
         className={css.TopbarNotificationButton}
         href="https://calendly.com/welcome-to-flex?utm_source=saunatime-demo&utm_campaign=banner"
-        target="_blank"
-        rel="noopener"
       >
         Book a call
-      </a>
+      </ExternalLink>
     </div>
   );
 };
