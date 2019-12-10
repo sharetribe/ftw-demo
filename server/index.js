@@ -30,13 +30,13 @@ const enforceSsl = require('express-enforces-ssl');
 const path = require('path');
 const sharetribeSdk = require('sharetribe-flex-sdk');
 const Decimal = require('decimal.js');
-const sitemap = require('express-sitemap');
+// const sitemap = require('express-sitemap');
 const auth = require('./auth');
 const renderer = require('./renderer');
 const dataLoader = require('./dataLoader');
 const fs = require('fs');
 const log = require('./log');
-const { sitemapStructure } = require('./sitemap');
+// const { sitemapStructure } = require('./sitemap');
 const csp = require('./csp');
 
 const buildPath = path.resolve(__dirname, '..', 'build');
@@ -57,7 +57,7 @@ const errorPage = fs.readFileSync(path.join(buildPath, '500.html'), 'utf-8');
 
 // load sitemap and robots file structure
 // and write those into files
-sitemap(sitemapStructure()).toFile();
+// sitemap(sitemapStructure()).toFile();
 
 // Setup error logger
 log.setup();
@@ -143,6 +143,13 @@ const noCacheHeaders = {
 const httpAgent = new http.Agent({ keepAlive: true });
 const httpsAgent = new https.Agent({ keepAlive: true });
 
+const hostnameToClientId = hostname => {
+  // Match the first sub domain for an UUID in form:
+  // 00000000-0000-0000-0000-000000000000.another-sub-domain.example.com
+  const match = /^(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\./.exec(hostname);
+  return match ? match[1] : null;
+};
+
 app.get('*', (req, res) => {
   if (req.url.startsWith('/static/')) {
     // The express.static middleware only handles static resources
@@ -158,10 +165,16 @@ app.get('*', (req, res) => {
 
   const context = {};
 
+  const clientId = hostnameToClientId(req.hostname);
+
+  if (!clientId) {
+    return res.status(404).send("Invalid Client ID format.");
+  }
+
   // Get handle to tokenStore
   // We check in unauthorized cases if requests have set tokens to cookies
   const tokenStore = sharetribeSdk.tokenStore.expressCookieStore({
-    clientId: CLIENT_ID,
+    clientId,
     req,
     res,
     secure: USING_SSL,
@@ -171,7 +184,7 @@ app.get('*', (req, res) => {
 
   const sdk = sharetribeSdk.createInstance({
     transitVerbose: TRANSIT_VERBOSE,
-    clientId: CLIENT_ID,
+    clientId,
     httpAgent: httpAgent,
     httpsAgent: httpsAgent,
     tokenStore,
