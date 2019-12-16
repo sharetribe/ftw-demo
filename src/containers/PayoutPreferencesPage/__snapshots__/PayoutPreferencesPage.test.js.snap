@@ -5,6 +5,10 @@ exports[`PayoutPreferencesPage matches snapshot with Stripe connected 1`] = `
   scrollingDisabled={false}
   title="PayoutPreferencesPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSideNavigation
     className={null}
     containerClassName={null}
@@ -60,6 +64,10 @@ exports[`PayoutPreferencesPage matches snapshot with Stripe not connected 1`] = 
   scrollingDisabled={false}
   title="PayoutPreferencesPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSideNavigation
     className={null}
     containerClassName={null}
@@ -130,6 +138,10 @@ exports[`PayoutPreferencesPage matches snapshot with details submitted 1`] = `
   scrollingDisabled={false}
   title="PayoutPreferencesPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSideNavigation
     className={null}
     containerClassName={null}

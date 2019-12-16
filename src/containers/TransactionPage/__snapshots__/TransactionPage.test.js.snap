@@ -5,6 +5,10 @@ exports[`TransactionPage - Order matches snapshot 1`] = `
   scrollingDisabled={false}
   title="TransactionPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSingleColumn
     className={null}
     rootClassName={null}
@@ -229,6 +233,10 @@ exports[`TransactionPage - Sale matches snapshot 1`] = `
   scrollingDisabled={false}
   title="TransactionPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSingleColumn
     className={null}
     rootClassName={null}
