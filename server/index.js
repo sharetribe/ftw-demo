@@ -168,7 +168,7 @@ app.get('*', (req, res) => {
   const clientId = hostnameToClientId(req.hostname);
 
   if (!clientId) {
-    return res.status(404).send("Invalid Client ID format.");
+    return res.status(404).send('Invalid Client ID format.');
   }
 
   // Get handle to tokenStore
