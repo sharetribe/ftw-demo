@@ -46,12 +46,17 @@ class PageComponent extends Component {
     document.addEventListener('drop', preventDefault);
 
     const intercomData = this.getIntercomData();
-    window.Intercom('boot', intercomData);
+
+    if (window.Intercom) {
+      window.Intercom('boot', intercomData);
+    }
   }
 
   componentDidUpdate() {
     const intercomData = this.getIntercomData();
-    window.Intercom('update', intercomData);
+    if (window.Intercom) {
+      window.Intercom('update', intercomData);
+    }
   }
 
   getIntercomData = () => {

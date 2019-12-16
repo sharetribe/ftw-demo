@@ -56,9 +56,22 @@ const dayCountAvailableForBooking = 90;
 // script, react-scripts (and the sharetribe-scripts fork of
 // react-scripts) require using the REACT_APP_ prefix to avoid
 // exposing server secrets to the client side.
-const sdkClientId = process.env.REACT_APP_SHARETRIBE_SDK_CLIENT_ID;
+// const sdkClientId = process.env.REACT_APP_SHARETRIBE_SDK_CLIENT_ID;
 const sdkBaseUrl = process.env.REACT_APP_SHARETRIBE_SDK_BASE_URL;
 const sdkTransitVerbose = process.env.REACT_APP_SHARETRIBE_SDK_TRANSIT_VERBOSE === 'true';
+
+const hostnameToClientId = hostname => {
+  // Match the first sub domain for an UUID in form:
+  // 00000000-0000-0000-0000-000000000000.another-sub-domain.example.com
+  const match = /^(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\./.exec(hostname);
+  return match ? match[1] : null;
+};
+
+let sdkClientId;
+
+if (typeof window !== 'undefined') {
+  sdkClientId = hostnameToClientId(window.location.hostname);
+}
 
 const currency = process.env.REACT_APP_SHARETRIBE_MARKETPLACE_CURRENCY;
 
@@ -83,7 +96,13 @@ const postalCode = '00100';
 const streetAddress = 'Bulevardi 14';
 
 // Canonical root url is needed in social media sharing and SEO optimization purposes.
-const canonicalRootURL = process.env.REACT_APP_CANONICAL_ROOT_URL;
+// const canonicalRootURL = process.env.REACT_APP_CANONICAL_ROOT_URL;
+
+let canonicalRootURL;
+
+if (typeof window !== 'undefined') {
+  canonicalRootURL = window.location.origin;
+}
 
 // Site title is needed in meta tags (bots and social media sharing reads those)
 const siteTitle = 'Saunatime Demo';

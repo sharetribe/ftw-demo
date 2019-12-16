@@ -5,6 +5,10 @@ exports[`InboxPage matches snapshot 1`] = `
   scrollingDisabled={false}
   title="InboxPage.ordersTitle"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSideNavigation
     className={null}
     containerClassName={null}
@@ -463,6 +467,10 @@ exports[`InboxPage matches snapshot 3`] = `
   scrollingDisabled={false}
   title="InboxPage.salesTitle"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSideNavigation
     className={null}
     containerClassName={null}

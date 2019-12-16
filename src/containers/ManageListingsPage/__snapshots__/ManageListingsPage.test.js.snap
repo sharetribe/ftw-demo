@@ -5,6 +5,10 @@ exports[`ContactDetailsPage matches snapshot 1`] = `
   scrollingDisabled={false}
   title="ManageListingsPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSingleColumn
     className={null}
     rootClassName={null}

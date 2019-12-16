@@ -5,6 +5,10 @@ exports[`NotFoundPageComponent matches snapshot 1`] = `
   scrollingDisabled={false}
   title="NotFoundPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSingleColumn
     className={null}
     rootClassName={null}

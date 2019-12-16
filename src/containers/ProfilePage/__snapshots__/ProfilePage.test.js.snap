@@ -12,6 +12,10 @@ exports[`ProfilePage matches snapshot 1`] = `
   scrollingDisabled={false}
   title="ProfilePage.schemaTitle"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSideNavigation
     className={null}
     containerClassName={null}
