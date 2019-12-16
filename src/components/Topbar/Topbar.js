@@ -115,7 +115,7 @@ class TopbarComponent extends Component {
       const path = pathByRouteName('LandingPage', routeConfiguration());
 
       // Shutdown Intercom
-      if (typeof window !== 'undefined') {
+      if (typeof window !== 'undefined' && window.Intercom) {
         window.Intercom('shutdown');
         window.Intercom('boot', { app_id: process.env.REACT_APP_INTERCOM_APP_ID });
       }
