@@ -14,8 +14,58 @@ way to update this template, but currently, we follow a pattern:
 
 ## Upcoming version 2019-XX-XX
 
+## [v4.0.0] 2019-12-19
+
+- [change] Use Stripe's [Connect onboarding](https://stripe.com/docs/connect/connect-onboarding) for
+  adding and updating the identity information of the Stripe account.
+  - Before updating to this version you should check
+    [the related pull request](https://github.com/sharetribe/ftw-daily/pull/1234)
+  - Read more from documentation:
+    [How to handle provider onboarding and identity verification on FTW](https://www.sharetribe.com/docs/guides/provider-onboarding-and-identity-verification/)
+
+**Note:** In this update we have deprecated the old `PayoutDetailsForm` and `PayoutPreferencesPage`.
+Form now on Stripe will handle collecting the identity information required for verificating the
+Stripe account. On FTW we will only handle creating the new account and adding and updating
+information about bank account (e.g. IBAN number). If you want to keep using the custom form inside
+your application you need to make sure that you are collecting all the required information and
+enabling users to update the account so that it doesn't get restricted.
+
+- [fix] Add missing props to examples related to EditListingWizard
+  [#1247](https://github.com/sharetribe/ftw-daily/pull/1247)
+- [fix] Add missing props to tests related to EditListingWizard
+  [#1246](https://github.com/sharetribe/ftw-daily/pull/1246)
+- [fix] Update links to API Reference docs.
+  [#1231](https://github.com/sharetribe/ftw-daily/pull/1231)
+
+  [v4.0.0]: https://github.com/sharetribe/flex-template-web/compare/v3.7.0...v4.0.0
+
+## [v3.7.0] 2019-12-09
+
+- [change] Make it easier to reorder EditListingWizard tabs/panels.
+  [#1240](https://github.com/sharetribe/ftw-daily/pull/1240)
+- [change] In `PayoutDetailsForm` show states (US and AU) and provinces (CA) in dropdown instead of
+  input. Since November 18, 2019 Stripe has been validating these values (read more
+  https://support.stripe.com/questions/connect-address-validation).
+- [add] Add IconEdit [#1237](https://github.com/sharetribe/ftw-daily/pull/1237)
+
+  [v3.7.0]: https://github.com/sharetribe/flex-template-web/compare/v3.6.1...v3.7.0
+
+## [v3.6.1] 2019-11-26
+
+- [fix] Fix XSS-vulnerability on SearchPage where URL param 'address' was exposed directly to
+  schema, which is just a script tag: <script type="application/ld+json">. On server-side, this
+  could leak malformed HTML through to browsers and made it possible to inject own script tags.
+
+However, CSP prevents any data breach: injected js can't send data to unknonwn 3rd party sites.
+
+NOTE: Check that `REACT_APP_CSP` is in block mode on your production environment. You can read more
+from Flex docs: https://www.sharetribe.com/docs/guides/how-to-set-up-csp-for-ftw/
+[#1233](https://github.com/sharetribe/flex-template-web/pull/1233)
+
 - [change] Rename repository form `flex-template-web` to `ftw-daily`.
   [#1230](https://github.com/sharetribe/flex-template-web/pull/1230)
+
+  [v3.6.1]: https://github.com/sharetribe/flex-template-web/compare/v3.6.0...v3.6.1
 
 ## [v3.6.0] 2019-11-04
 
