@@ -18,6 +18,7 @@ import {
   Footer,
   Page,
   UserNav,
+  TopbarNotification,
 } from '../../components';
 import { TopbarContainer } from '../../containers';
 import { PaymentMethodsForm } from '../../forms';
@@ -155,6 +156,7 @@ const PaymentMethodsPageComponent = props => {
   const showCardDetails = !!hasDefaultPaymentMethod;
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
+      <TopbarNotification />
       <LayoutSideNavigation>
         <LayoutWrapperTopbar>
           <TopbarContainer

@@ -24,6 +24,7 @@ import {
   Page,
   StripeConnectAccountStatusBox,
   UserNav,
+  TopbarNotification,
 } from '../../components';
 import { StripeConnectAccountForm } from '../../forms';
 import { TopbarContainer } from '..';
@@ -147,6 +148,7 @@ export const StripePayoutPageComponent = props => {
 
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
+      <TopbarNotification />
       <LayoutSideNavigation>
         <LayoutWrapperTopbar>
           <TopbarContainer

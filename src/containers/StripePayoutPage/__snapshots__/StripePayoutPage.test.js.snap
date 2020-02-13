@@ -5,6 +5,10 @@ exports[`StripePayoutPage matches snapshot with Stripe connected 1`] = `
   scrollingDisabled={false}
   title="StripePayoutPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSideNavigation
     className={null}
     containerClassName={null}
@@ -67,6 +71,10 @@ exports[`StripePayoutPage matches snapshot with Stripe not connected 1`] = `
   scrollingDisabled={false}
   title="StripePayoutPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSideNavigation
     className={null}
     containerClassName={null}
@@ -129,6 +137,10 @@ exports[`StripePayoutPage matches snapshot with details submitted 1`] = `
   scrollingDisabled={false}
   title="StripePayoutPage.title"
 >
+  <TopbarNotification
+    className={null}
+    rootClassName={null}
+  />
   <LayoutSideNavigation
     className={null}
     containerClassName={null}
