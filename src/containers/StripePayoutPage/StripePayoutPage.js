@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { bool, func, oneOf, shape } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -30,6 +30,7 @@ import { TopbarContainer } from '..';
 import { savePayoutDetails, loadData } from './StripePayoutPage.duck';
 
 import css from './StripePayoutPage.css';
+import { testStripeKeys } from '../../ducks/stripe.duck';
 
 const STRIPE_ONBOARDING_RETURN_URL_SUCCESS = 'success';
 const STRIPE_ONBOARDING_RETURN_URL_FAILURE = 'failure';
@@ -92,7 +93,16 @@ export const StripePayoutPageComponent = props => {
     payoutDetailsSaved,
     params,
     intl,
+    onTestStripeKeys,
+    testStripeKeysInProgress,
+    matchingStripeKeys,
   } = props;
+
+  useEffect(() => {
+    if (!testStripeKeysInProgress && matchingStripeKeys === null) {
+      onTestStripeKeys();
+    }
+  });
 
   const { returnURLType } = params;
   const ensuredCurrentUser = ensureCurrentUser(currentUser);
@@ -156,6 +166,7 @@ export const StripePayoutPageComponent = props => {
               <FormattedMessage id="StripePayoutPage.loadingData" />
             ) : (
               <StripeConnectAccountForm
+                matchingStripeKeys={matchingStripeKeys}
                 disabled={formDisabled}
                 inProgress={payoutDetailsSaveInProgress}
                 ready={payoutDetailsSaved}
@@ -245,6 +256,7 @@ const mapStateToProps = state => {
     stripeAccount,
     stripeAccountFetched,
   } = state.stripeConnectAccount;
+  const { testStripeKeysInProgress, matchingStripeKeys } = state.stripe;
   const { currentUser } = state.user;
   const { payoutDetailsSaveInProgress, payoutDetailsSaved } = state.StripePayoutPage;
   return {
@@ -258,6 +270,8 @@ const mapStateToProps = state => {
     payoutDetailsSaveInProgress,
     payoutDetailsSaved,
     scrollingDisabled: isScrollingDisabled(state),
+    testStripeKeysInProgress,
+    matchingStripeKeys,
   };
 };
 
@@ -266,6 +280,7 @@ const mapDispatchToProps = dispatch => ({
   onPayoutDetailsFormSubmit: (values, isUpdateCall) =>
     dispatch(savePayoutDetails(values, isUpdateCall)),
   onGetStripeConnectAccountLink: params => dispatch(getStripeConnectAccountLink(params)),
+  onTestStripeKeys: params => dispatch(testStripeKeys(params)),
 });
 
 const StripePayoutPage = compose(

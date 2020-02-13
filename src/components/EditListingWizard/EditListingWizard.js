@@ -264,6 +264,7 @@ class EditListingWizard extends Component {
       stripeAccountFetched,
       stripeAccount,
       currentUser,
+      matchingStripeKeys,
       ...rest
     } = this.props;
 
@@ -394,6 +395,7 @@ class EditListingWizard extends Component {
               <FormattedMessage id="StripePayoutPage.loadingData" />
             ) : (
               <StripeConnectAccountForm
+                matchingStripeKeys={matchingStripeKeys}
                 disabled={formDisabled}
                 inProgress={payoutDetailsSaveInProgress}
                 ready={payoutDetailsSaved}

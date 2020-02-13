@@ -139,10 +139,15 @@ const ErrorsMaybe = props => {
 
 const StripeConnectAccountFormComponent = props => {
   const [showCardUpdateInput, setShowCardUpdateInput] = useState(false);
-  const { onSubmit, ...restOfProps } = props;
+
+  const { onSubmit, matchingStripeKeys, ...restOfProps } = props;
   const isUpdate = props.stripeConnected;
 
-  return (
+  return matchingStripeKeys === false ? (
+    <p className={css.error}>
+      <FormattedMessage id="DemoGeneralMessage.stripeKeysNotMatching" />
+    </p>
+  ) : (
     <FinalForm
       {...restOfProps}
       onSubmit={values => onSubmit(values, isUpdate)}

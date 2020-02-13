@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { bool, func, object, shape, string, oneOf } from 'prop-types';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -21,6 +21,7 @@ import {
   createStripeAccount,
   getStripeConnectAccountLink,
 } from '../../ducks/stripeConnectAccount.duck';
+import { testStripeKeys } from '../../ducks/stripe.duck';
 
 import { EditListingWizard, NamedRedirect, Page } from '../../components';
 import { TopbarContainer } from '../../containers';
@@ -81,7 +82,16 @@ export const EditListingPageComponent = props => {
     scrollingDisabled,
     stripeAccountFetched,
     stripeAccount,
+    onTestStripeKeys,
+    testStripeKeysInProgress,
+    matchingStripeKeys,
   } = props;
+
+  useEffect(() => {
+    if (matchingStripeKeys === null && !testStripeKeysInProgress) {
+      onTestStripeKeys();
+    }
+  });
 
   const { id, type, returnURLType } = params;
   const isNewURI = type === LISTING_PAGE_PARAM_TYPE_NEW;
@@ -210,6 +220,7 @@ export const EditListingPageComponent = props => {
           payoutDetailsSaved={page.payoutDetailsSaved}
           stripeAccountFetched={stripeAccountFetched}
           stripeAccount={stripeAccount}
+          matchingStripeKeys={matchingStripeKeys}
         />
       </Page>
     );
@@ -283,6 +294,7 @@ const mapStateToProps = state => {
     stripeAccountFetched,
   } = state.stripeConnectAccount;
 
+  const { testStripeKeysInProgress, matchingStripeKeys } = state.stripe;
   const { currentUser } = state.user;
 
   const fetchInProgress = createStripeAccountInProgress;
@@ -304,6 +316,8 @@ const mapStateToProps = state => {
     getOwnListing,
     page,
     scrollingDisabled: isScrollingDisabled(state),
+    testStripeKeysInProgress,
+    matchingStripeKeys,
   };
 };
 
@@ -326,6 +340,7 @@ const mapDispatchToProps = dispatch => ({
   onUpdateImageOrder: imageOrder => dispatch(updateImageOrder(imageOrder)),
   onRemoveListingImage: imageId => dispatch(removeListingImage(imageId)),
   onChange: () => dispatch(clearUpdatedTab()),
+  onTestStripeKeys: params => dispatch(testStripeKeys(params)),
 });
 
 // Note: it is important that the withRouter HOC is **outside** the
