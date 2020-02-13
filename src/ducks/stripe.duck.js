@@ -1,5 +1,6 @@
 import { storableError } from '../util/errors';
 import * as log from '../util/log';
+import config from '../config';
 
 // ================ Action types ================ //
 
@@ -29,6 +30,10 @@ export const RETRIEVE_PAYMENT_INTENT_REQUEST = 'app/stripe/RETRIEVE_PAYMENT_INTE
 export const RETRIEVE_PAYMENT_INTENT_SUCCESS = 'app/stripe/RETRIEVE_PAYMENT_INTENT_SUCCESS';
 export const RETRIEVE_PAYMENT_INTENT_ERROR = 'app/stripe/RETRIEVE_PAYMENT_INTENT_ERROR';
 
+export const TEST_STRIPE_KEYS_REQUEST = 'app/stripe/TEST_STRIPE_KEYS_REQUEST';
+export const TEST_STRIPE_KEYS_SUCCESS = 'app/stripe/TEST_STRIPE_KEYS_SUCCESS';
+export const TEST_STRIPE_KEYS_ERROR = 'app/stripe/TEST_STRIPE_KEYS_ERROR';
+
 // ================ Reducer ================ //
 
 const initialState = {
@@ -40,6 +45,8 @@ const initialState = {
   setupIntent: null,
   retrievePaymentIntentInProgress: false,
   retrievePaymentIntentError: null,
+  testStripeKeysInProgress: false,
+  matchingStripeKeys: null,
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -140,6 +147,16 @@ export default function reducer(state = initialState, action = {}) {
         retrievePaymentIntentInProgress: false,
       };
 
+    case TEST_STRIPE_KEYS_REQUEST:
+      return {
+        ...state,
+        testStripeKeysInProgress: true,
+      };
+    case TEST_STRIPE_KEYS_SUCCESS:
+      return { ...state, matchingStripeKeys: true, testStripeKeysInProgress: false };
+    case TEST_STRIPE_KEYS_ERROR:
+      return { ...state, matchingStripeKeys: false, testStripeKeysInProgress: false };
+
     default:
       return state;
   }
@@ -196,6 +213,20 @@ export const retrievePaymentIntentSuccess = payload => ({
 
 export const retrievePaymentIntentError = payload => ({
   type: RETRIEVE_PAYMENT_INTENT_ERROR,
+  payload,
+  error: true,
+});
+
+export const testStripeKeysRequest = () => ({
+  type: TEST_STRIPE_KEYS_REQUEST,
+});
+
+export const testStripeKeysSuccess = () => ({
+  type: TEST_STRIPE_KEYS_SUCCESS,
+});
+
+export const testStripeKeysError = payload => ({
+  type: TEST_STRIPE_KEYS_ERROR,
   payload,
   error: true,
 });
@@ -325,5 +356,56 @@ export const handleCardSetup = params => dispatch => {
         stripeMessage: loggableError.message,
       });
       throw e;
+    });
+};
+
+// In the demo, test if Stripe public and secret key are matching
+export const testStripeKeys = () => dispatch => {
+  if (!window.Stripe) {
+    throw new Error('Stripe must be loaded for StripeBankAccountTokenInputField');
+  }
+
+  // If there is no Stripe publishable key set in demo, we can skip the check because
+  // missing Stripe key has been handled in the code
+  if (!config.stripe.publishableKey) {
+    return;
+  }
+
+  const stripe = window.Stripe(config.stripe.publishableKey);
+
+  dispatch(testStripeKeysRequest());
+
+  // We are using Stripe.js createSource enpoint just because it doesn't require
+  // Stripe Element as parameter https://stripe.com/docs/js/tokens_sources/create_source
+  // The source is created with the example values and we don't care about the result
+  // if it's not error.
+  stripe
+    .createSource({
+      type: 'ideal',
+      amount: 1099,
+      currency: 'eur',
+      owner: {
+        name: 'Jenny Rosen',
+      },
+      redirect: {
+        return_url: 'https://shop.example.com/crtA6B28E1',
+      },
+    })
+    .then(result => {
+      if (result.error) {
+        const e = new Error(result.error.message);
+        e.stripeError = result.error;
+
+        throw e;
+      } else {
+        dispatch(testStripeKeysSuccess());
+      }
+    })
+    .catch(e => {
+      if (!e.stripeError) {
+        throw e;
+      }
+
+      dispatch(testStripeKeysError(e));
     });
 };
