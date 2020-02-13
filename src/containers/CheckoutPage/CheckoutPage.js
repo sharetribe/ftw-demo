@@ -42,7 +42,7 @@ import {
 } from '../../components';
 import { StripePaymentForm } from '../../forms';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
-import { handleCardPayment, retrievePaymentIntent } from '../../ducks/stripe.duck';
+import { handleCardPayment, retrievePaymentIntent, testStripeKeys } from '../../ducks/stripe.duck';
 import { savePaymentMethod } from '../../ducks/paymentMethods.duck';
 
 import {
@@ -113,6 +113,10 @@ export class CheckoutPageComponent extends Component {
   componentDidMount() {
     if (window) {
       this.loadInitialData();
+    }
+
+    if (this.props.matchingStripeKeys === null && !this.props.testStripeKeysInProgress) {
+      this.props.onTestStripeKeys();
     }
   }
 
@@ -500,6 +504,7 @@ export class CheckoutPageComponent extends Component {
       paymentIntent,
       retrievePaymentIntentError,
       stripeCustomerFetched,
+      matchingStripeKeys,
     } = this.props;
 
     // Since the listing data is already given from the ListingPage
@@ -786,7 +791,11 @@ export class CheckoutPageComponent extends Component {
                   />
                 </p>
               ) : null}
-              {showPaymentForm ? (
+              {matchingStripeKeys === false ? (
+                <p className={css.error}>
+                  <FormattedMessage id="DemoGeneralMessage.stripeKeysNotMatching" />
+                </p>
+              ) : showPaymentForm ? (
                 <StripePaymentForm
                   className={css.paymentForm}
                   onSubmit={this.handleSubmit}
@@ -915,7 +924,13 @@ const mapStateToProps = state => {
     confirmPaymentError,
   } = state.CheckoutPage;
   const { currentUser } = state.user;
-  const { handleCardPaymentError, paymentIntent, retrievePaymentIntentError } = state.stripe;
+  const {
+    handleCardPaymentError,
+    paymentIntent,
+    retrievePaymentIntentError,
+    testStripeKeysInProgress,
+    matchingStripeKeys,
+  } = state.stripe;
   return {
     scrollingDisabled: isScrollingDisabled(state),
     currentUser,
@@ -932,6 +947,8 @@ const mapStateToProps = state => {
     confirmPaymentError,
     paymentIntent,
     retrievePaymentIntentError,
+    testStripeKeysInProgress,
+    matchingStripeKeys,
   };
 };
 
@@ -946,6 +963,7 @@ const mapDispatchToProps = dispatch => ({
   onSendMessage: params => dispatch(sendMessage(params)),
   onSavePaymentMethod: (stripeCustomer, stripePaymentMethodId) =>
     dispatch(savePaymentMethod(stripeCustomer, stripePaymentMethodId)),
+  onTestStripeKeys: params => dispatch(testStripeKeys(params)),
 });
 
 const CheckoutPage = compose(

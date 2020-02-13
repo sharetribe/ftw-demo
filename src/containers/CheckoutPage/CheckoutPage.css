@@ -345,3 +345,7 @@
     margin: 0 48px;
   }
 }
+
+.error {
+  @apply --marketplaceModalErrorStyles;
+}
