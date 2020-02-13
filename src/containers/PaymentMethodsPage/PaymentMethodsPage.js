@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { bool, func, object } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -6,7 +6,7 @@ import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import { ensureCurrentUser, ensureStripeCustomer, ensurePaymentMethodCard } from '../../util/data';
 import { propTypes } from '../../util/types';
 import { savePaymentMethod, deletePaymentMethod } from '../../ducks/paymentMethods.duck';
-import { handleCardSetup } from '../../ducks/stripe.duck';
+import { handleCardSetup, testStripeKeys } from '../../ducks/stripe.duck';
 import { manageDisableScrolling, isScrollingDisabled } from '../../ducks/UI.duck';
 import {
   SavedCardDetails,
@@ -45,7 +45,16 @@ const PaymentMethodsPageComponent = props => {
     onManageDisableScrolling,
     intl,
     stripeCustomerFetched,
+    onTestStripeKeys,
+    matchingStripeKeys,
+    testStripeKeysInProgress,
   } = props;
+
+  useEffect(() => {
+    if (matchingStripeKeys === null && !testStripeKeysInProgress) {
+      onTestStripeKeys();
+    }
+  });
 
   const getClientSecret = setupIntent => {
     return setupIntent && setupIntent.attributes ? setupIntent.attributes.clientSecret : null;
@@ -161,7 +170,11 @@ const PaymentMethodsPageComponent = props => {
             <h1 className={css.title}>
               <FormattedMessage id="PaymentMethodsPage.heading" />
             </h1>
-            {!stripeCustomerFetched ? null : (
+            {matchingStripeKeys === false ? (
+              <p className={css.error}>
+                <FormattedMessage id="DemoGeneralMessage.stripeKeysNotMatching" />
+              </p>
+            ) : !stripeCustomerFetched ? null : (
               <>
                 {showCardDetails ? (
                   <SavedCardDetails
@@ -236,7 +249,7 @@ const mapStateToProps = state => {
 
   const { stripeCustomerFetched } = state.PaymentMethodsPage;
 
-  const { handleCardSetupError } = state.stripe;
+  const { handleCardSetupError, testStripeKeysInProgress, matchingStripeKeys } = state.stripe;
   return {
     currentUser,
     scrollingDisabled: isScrollingDisabled(state),
@@ -246,6 +259,8 @@ const mapStateToProps = state => {
     createStripeCustomerError,
     handleCardSetupError,
     stripeCustomerFetched,
+    testStripeKeysInProgress,
+    matchingStripeKeys,
   };
 };
 
@@ -258,6 +273,7 @@ const mapDispatchToProps = dispatch => ({
   onSavePaymentMethod: (stripeCustomer, newPaymentMethod) =>
     dispatch(savePaymentMethod(stripeCustomer, newPaymentMethod)),
   onDeletePaymentMethod: params => dispatch(deletePaymentMethod(params)),
+  onTestStripeKeys: params => dispatch(testStripeKeys(params)),
 });
 
 const PaymentMethodsPage = compose(
