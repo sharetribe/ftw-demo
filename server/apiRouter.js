@@ -13,8 +13,6 @@ const crypto = require('crypto');
 const sharetribeSdk = require('sharetribe-flex-sdk');
 const Decimal = require('decimal.js');
 
-const CLIENT_ID = process.env.REACT_APP_SHARETRIBE_SDK_CLIENT_ID;
-const ROOT_URL = process.env.REACT_APP_CANONICAL_ROOT_URL;
 const CONSOLE_URL =
   process.env.SERVER_SHARETRIBE_CONSOLE_URL || 'https://flex-console.sharetribe.com';
 const BASE_URL = process.env.REACT_APP_SHARETRIBE_SDK_BASE_URL;
@@ -25,7 +23,7 @@ const router = express.Router();
 
 // redirect_uri param used when initiating a login as authentication flow and
 // when requesting a token using an authorization code
-const loginAsRedirectUri = `${ROOT_URL.replace(/\/$/, '')}/api/login-as`;
+const loginAsRedirectUri = rootUrl => `${rootUrl.replace(/\/$/, '')}/api/login-as`;
 
 // Instantiate HTTP(S) Agents with keepAlive set to true.
 // This will reduce the request time for consecutive requests by
@@ -35,8 +33,8 @@ const httpAgent = new http.Agent({ keepAlive: true });
 const httpsAgent = new https.Agent({ keepAlive: true });
 
 // Cookies used for authorization code authentication.
-const stateKey = `st-${CLIENT_ID}-oauth2State`;
-const codeVerifierKey = `st-${CLIENT_ID}-pkceCodeVerifier`;
+const stateKey = clientId => `st-${clientId}-oauth2State`;
+const codeVerifierKey = clientId => `st-${clientId}-pkceCodeVerifier`;
 
 /**
  * Makes a base64 string URL friendly by
@@ -47,6 +45,13 @@ const urlifyBase64 = base64Str =>
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=/g, '');
+
+const hostnameToClientId = hostname => {
+  // Match the first sub domain for an UUID in form:
+  // 00000000-0000-0000-0000-000000000000.another-sub-domain.example.com
+  const match = /^(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\./.exec(hostname);
+  return match ? match[1] : null;
+};
 
 // Initiates an authorization code authentication flow. This authentication flow
 // enables marketplace operators that have an ongoing Console session to log
@@ -65,7 +70,12 @@ router.get('/initiate-login-as', (req, res) => {
   if (!userId) {
     return res.status(400).send('Missing query parameter: user_id.');
   }
-  if (!ROOT_URL) {
+
+  const hostname = req.hostname;
+  const clientId = hostnameToClientId(hostname);
+  const rootUrl = `${req.protocol}:\/\/${hostname}`;
+
+  if (!rootUrl) {
     return res.status(409).send('Marketplace canonical root URL is missing.');
   }
 
@@ -80,8 +90,8 @@ router.get('/initiate-login-as', (req, res) => {
 
   const location = `${authorizeServerUrl}?\
 response_type=code&\
-client_id=${CLIENT_ID}&\
-redirect_uri=${loginAsRedirectUri}&\
+client_id=${clientId}&\
+redirect_uri=${loginAsRedirectUri(rootUrl)}&\
 user_id=${userId}&\
 state=${state}&\
 code_challenge=${codeChallenge}&\
@@ -92,8 +102,8 @@ code_challenge_method=S256`;
     secure: USING_SSL,
   };
 
-  res.cookie(stateKey, state, cookieOpts);
-  res.cookie(codeVerifierKey, codeVerifier, cookieOpts);
+  res.cookie(stateKey(clientId), state, cookieOpts);
+  res.cookie(codeVerifierKey(clientId), codeVerifier, cookieOpts);
   return res.redirect(location);
 });
 
@@ -102,7 +112,12 @@ code_challenge_method=S256`;
 // page.
 router.get('/login-as', (req, res) => {
   const { code, state, error } = req.query;
-  const storedState = req.cookies[stateKey];
+
+  const hostname = req.hostname;
+  const clientId = hostnameToClientId(hostname);
+  const rootUrl = `${req.protocol}:\/\/${hostname}`;
+
+  const storedState = req.cookies[stateKey(clientId)];
 
   if (state !== storedState) {
     return res.status(401).send('Invalid state parameter.');
@@ -112,15 +127,15 @@ router.get('/login-as', (req, res) => {
     return res.status(401).send(`Failed to authorize as a user, error: ${error}.`);
   }
 
-  const codeVerifier = req.cookies[codeVerifierKey];
+  const codeVerifier = req.cookies[codeVerifierKey(clientId)];
 
   // clear state and code verifier cookies
-  res.clearCookie(stateKey, { secure: USING_SSL });
-  res.clearCookie(codeVerifierKey, { secure: USING_SSL });
+  res.clearCookie(stateKey(clientId), { secure: USING_SSL });
+  res.clearCookie(codeVerifierKey(clientId), { secure: USING_SSL });
 
   const baseUrl = BASE_URL ? { baseUrl: BASE_URL } : {};
   const tokenStore = sharetribeSdk.tokenStore.expressCookieStore({
-    clientId: CLIENT_ID,
+    clientId,
     req,
     res,
     secure: USING_SSL,
@@ -128,7 +143,7 @@ router.get('/login-as', (req, res) => {
 
   const sdk = sharetribeSdk.createInstance({
     transitVerbose: TRANSIT_VERBOSE,
-    clientId: CLIENT_ID,
+    clientId,
     httpAgent: httpAgent,
     httpsAgent: httpsAgent,
     tokenStore,
@@ -146,7 +161,7 @@ router.get('/login-as', (req, res) => {
   sdk
     .login({
       code,
-      redirect_uri: loginAsRedirectUri,
+      redirect_uri: loginAsRedirectUri(rootUrl),
       code_verifier: codeVerifier,
     })
     .then(() => res.redirect('/'))
