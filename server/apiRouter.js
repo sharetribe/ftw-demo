@@ -6,166 +6,78 @@
  * endpoints are prefixed in the main server where this file is used.
  */
 
-const http = require('http');
-const https = require('https');
 const express = require('express');
-const crypto = require('crypto');
-const sharetribeSdk = require('sharetribe-flex-sdk');
-const Decimal = require('decimal.js');
+const bodyParser = require('body-parser');
+const { deserialize } = require('./api-util/sdk');
 
-const CONSOLE_URL =
-  process.env.SERVER_SHARETRIBE_CONSOLE_URL || 'https://flex-console.sharetribe.com';
-const BASE_URL = process.env.REACT_APP_SHARETRIBE_SDK_BASE_URL;
-const TRANSIT_VERBOSE = process.env.REACT_APP_SHARETRIBE_SDK_TRANSIT_VERBOSE === 'true';
-const USING_SSL = process.env.REACT_APP_SHARETRIBE_USING_SSL === 'true';
+const initiateLoginAs = require('./api/initiate-login-as');
+const loginAs = require('./api/login-as');
+const transactionLineItems = require('./api/transaction-line-items');
+const initiatePrivileged = require('./api/initiate-privileged');
+const transitionPrivileged = require('./api/transition-privileged');
+
+const createUserWithIdp = require('./api/auth/createUserWithIdp');
+
+const { authenticateFacebook, authenticateFacebookCallback } = require('./api/auth/facebook');
+const { authenticateGoogle, authenticateGoogleCallback } = require('./api/auth/google');
 
 const router = express.Router();
 
-// redirect_uri param used when initiating a login as authentication flow and
-// when requesting a token using an authorization code
-const loginAsRedirectUri = rootUrl => `${rootUrl.replace(/\/$/, '')}/api/login-as`;
+// ================ API router middleware: ================ //
 
-// Instantiate HTTP(S) Agents with keepAlive set to true.
-// This will reduce the request time for consecutive requests by
-// reusing the existing TCP connection, thus eliminating the time used
-// for setting up new TCP connections.
-const httpAgent = new http.Agent({ keepAlive: true });
-const httpsAgent = new https.Agent({ keepAlive: true });
+// Parse Transit body first to a string
+router.use(
+  bodyParser.text({
+    type: 'application/transit+json',
+  })
+);
 
-// Cookies used for authorization code authentication.
-const stateKey = clientId => `st-${clientId}-oauth2State`;
-const codeVerifierKey = clientId => `st-${clientId}-pkceCodeVerifier`;
-
-/**
- * Makes a base64 string URL friendly by
- * replacing unaccepted characters.
- */
-const urlifyBase64 = base64Str =>
-  base64Str
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
-
-const hostnameToClientId = hostname => {
-  // Match the first sub domain for an UUID in form:
-  // 00000000-0000-0000-0000-000000000000.another-sub-domain.example.com
-  const match = /^(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\./.exec(hostname);
-  return match ? match[1] : null;
-};
-
-// Initiates an authorization code authentication flow. This authentication flow
-// enables marketplace operators that have an ongoing Console session to log
-// into their marketplace as a user of the marketplace.
-//
-// The authorization code is requested from Console and it is used to request a
-// token from the Flex Auth API.
-//
-// This endpoint will return a 302 to Console which requests the authorization
-// code. Console returns a 302 with the code to the `redirect_uri` that is
-// passed in this response. The request to the redirect URI is handled with the
-// `/login-as` endpoint.
-router.get('/initiate-login-as', (req, res) => {
-  const userId = req.query.user_id;
-
-  if (!userId) {
-    return res.status(400).send('Missing query parameter: user_id.');
+// Deserialize Transit body string to JS data
+router.use((req, res, next) => {
+  if (req.get('Content-Type') === 'application/transit+json' && typeof req.body === 'string') {
+    try {
+      req.body = deserialize(req.body);
+    } catch (e) {
+      console.error('Failed to parse request body as Transit:');
+      console.error(e);
+      res.status(400).send('Invalid Transit in request body.');
+      return;
+    }
   }
-
-  const hostname = req.hostname;
-  const clientId = hostnameToClientId(hostname);
-  const rootUrl = `${req.protocol}:\/\/${hostname}`;
-
-  if (!rootUrl) {
-    return res.status(409).send('Marketplace canonical root URL is missing.');
-  }
-
-  const state = urlifyBase64(crypto.randomBytes(32).toString('base64'));
-  const codeVerifier = urlifyBase64(crypto.randomBytes(32).toString('base64'));
-  const hash = crypto
-    .createHash('sha256')
-    .update(codeVerifier)
-    .digest('base64');
-  const codeChallenge = urlifyBase64(hash);
-  const authorizeServerUrl = `${CONSOLE_URL}/api/authorize-as`;
-
-  const location = `${authorizeServerUrl}?\
-response_type=code&\
-client_id=${clientId}&\
-redirect_uri=${loginAsRedirectUri(rootUrl)}&\
-user_id=${userId}&\
-state=${state}&\
-code_challenge=${codeChallenge}&\
-code_challenge_method=S256`;
-
-  const cookieOpts = {
-    maxAge: 1000 * 30, // 30 seconds
-    secure: USING_SSL,
-  };
-
-  res.cookie(stateKey(clientId), state, cookieOpts);
-  res.cookie(codeVerifierKey(clientId), codeVerifier, cookieOpts);
-  return res.redirect(location);
+  next();
 });
 
-// Works as the redirect_uri passed in an authorization code request. Receives
-// an authorization code and uses that to log in and redirect to the landing
-// page.
-router.get('/login-as', (req, res) => {
-  const { code, state, error } = req.query;
+// ================ API router endpoints: ================ //
 
-  const hostname = req.hostname;
-  const clientId = hostnameToClientId(hostname);
-  const rootUrl = `${req.protocol}:\/\/${hostname}`;
+router.get('/initiate-login-as', initiateLoginAs);
+router.get('/login-as', loginAs);
+router.post('/transaction-line-items', transactionLineItems);
+router.post('/initiate-privileged', initiatePrivileged);
+router.post('/transition-privileged', transitionPrivileged);
 
-  const storedState = req.cookies[stateKey(clientId)];
+// Create user with identity provider (e.g. Facebook or Google)
+// This endpoint is called to create a new user after user has confirmed
+// they want to continue with the data fetched from IdP (e.g. name and email)
+router.post('/auth/create-user-with-idp', createUserWithIdp);
 
-  if (state !== storedState) {
-    return res.status(401).send('Invalid state parameter.');
-  }
+// Facebook authentication endpoints
 
-  if (error) {
-    return res.status(401).send(`Failed to authorize as a user, error: ${error}.`);
-  }
+// This endpoint is called when user wants to initiate authenticaiton with Facebook
+router.get('/auth/facebook', authenticateFacebook);
 
-  const codeVerifier = req.cookies[codeVerifierKey(clientId)];
+// This is the route for callback URL the user is redirected after authenticating
+// with Facebook. In this route a Passport.js custom callback is used for calling
+// loginWithIdp endpoint in Flex API to authenticate user to Flex
+router.get('/auth/facebook/callback', authenticateFacebookCallback);
 
-  // clear state and code verifier cookies
-  res.clearCookie(stateKey(clientId), { secure: USING_SSL });
-  res.clearCookie(codeVerifierKey(clientId), { secure: USING_SSL });
+// Google authentication endpoints
 
-  const baseUrl = BASE_URL ? { baseUrl: BASE_URL } : {};
-  const tokenStore = sharetribeSdk.tokenStore.expressCookieStore({
-    clientId,
-    req,
-    res,
-    secure: USING_SSL,
-  });
+// This endpoint is called when user wants to initiate authenticaiton with Google
+router.get('/auth/google', authenticateGoogle);
 
-  const sdk = sharetribeSdk.createInstance({
-    transitVerbose: TRANSIT_VERBOSE,
-    clientId,
-    httpAgent: httpAgent,
-    httpsAgent: httpsAgent,
-    tokenStore,
-    typeHandlers: [
-      {
-        type: sharetribeSdk.types.BigDecimal,
-        customType: Decimal,
-        writer: v => new sharetribeSdk.types.BigDecimal(v.toString()),
-        reader: v => new Decimal(v.value),
-      },
-    ],
-    ...baseUrl,
-  });
-
-  sdk
-    .login({
-      code,
-      redirect_uri: loginAsRedirectUri(rootUrl),
-      code_verifier: codeVerifier,
-    })
-    .then(() => res.redirect('/'))
-    .catch(() => res.status(401).send('Unable to authenticate as a user'));
-});
+// This is the route for callback URL the user is redirected after authenticating
+// with Google. In this route a Passport.js custom callback is used for calling
+// loginWithIdp endpoint in Flex API to authenticate user to Flex
+router.get('/auth/google/callback', authenticateGoogleCallback);
 
 module.exports = router;

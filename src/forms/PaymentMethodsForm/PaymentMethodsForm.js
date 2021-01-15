@@ -10,7 +10,7 @@ import { Form as FinalForm } from 'react-final-form';
 import classNames from 'classnames';
 import config from '../../config';
 import { Form, PrimaryButton, FieldTextInput, StripePaymentAddress } from '../../components';
-import css from './PaymentMethodsForm.css';
+import css from './PaymentMethodsForm.module.css';
 
 /**
  * Translate a Stripe API error object.
@@ -52,17 +52,17 @@ const stripeErrorTranslation = (intl, stripeError) => {
 const stripeElementsOptions = {
   fonts: [
     {
-      family: 'sofiapro',
+      family: 'poppins',
       fontSmoothing: 'antialiased',
       src:
-        'local("sofiapro"), local("SofiaPro"), local("Sofia Pro"), url("https://assets-sharetribecom.sharetribe.com/webfonts/sofiapro/sofiapro-medium-webfont.woff2") format("woff2")',
+        'local("poppins"), local("Poppins"), url("https://assets-sharetribecom.sharetribe.com/webfonts/poppins/Poppins-Medium.ttf") format("truetype")',
     },
   ],
 };
 
 const cardStyles = {
   base: {
-    fontFamily: '"sofiapro", Helvetica, Arial, sans-serif',
+    fontFamily: '"poppins", Helvetica, Arial, sans-serif',
     fontSize: '18px',
     fontSmoothing: 'antialiased',
     lineHeight: '24px',
@@ -283,7 +283,7 @@ PaymentMethodsForm.defaultProps = {
   className: null,
   rootClassName: null,
   inProgress: false,
-  handleSubmit: null,
+  onSubmit: null,
   addPaymentMethodError: null,
   deletePaymentMethodError: null,
   createStripeCustomerError: null,
@@ -294,7 +294,7 @@ PaymentMethodsForm.defaultProps = {
 PaymentMethodsForm.propTypes = {
   formId: string,
   intl: intlShape.isRequired,
-  handleSubmit: func,
+  onSubmit: func,
   addPaymentMethodError: object,
   deletePaymentMethodError: object,
   createStripeCustomerError: object,

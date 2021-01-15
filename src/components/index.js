@@ -59,7 +59,7 @@ export { default as ValidationError } from './ValidationError/ValidationError';
 // First components that include only atomic components //
 //////////////////////////////////////////////////////////
 
-export { default as Button, PrimaryButton, SecondaryButton, InlineTextButton } from './Button/Button';
+export { default as Button, PrimaryButton, SecondaryButton, InlineTextButton, SocialLoginButton } from './Button/Button';
 export { default as CookieConsent } from './CookieConsent/CookieConsent';
 export { default as ImageCarousel } from './ImageCarousel/ImageCarousel';
 export { default as ImageFromFile } from './ImageFromFile/ImageFromFile';
@@ -133,9 +133,9 @@ export { default as Page } from './Page/Page';
 export { default as PriceFilter } from './PriceFilter/PriceFilter';
 export { default as Reviews } from './Reviews/Reviews';
 export { default as SavedCardDetails } from './SavedCardDetails/SavedCardDetails';
-export { default as SearchFilters } from './SearchFilters/SearchFilters';
 export { default as SearchFiltersMobile } from './SearchFiltersMobile/SearchFiltersMobile';
-export { default as SearchFiltersPanel } from './SearchFiltersPanel/SearchFiltersPanel';
+export { default as SearchFiltersPrimary } from './SearchFiltersPrimary/SearchFiltersPrimary';
+export { default as SearchFiltersSecondary } from './SearchFiltersSecondary/SearchFiltersSecondary';
 export { default as SearchMap } from './SearchMap/SearchMap';
 export { default as SearchMapGroupLabel } from './SearchMapGroupLabel/SearchMapGroupLabel';
 export { default as SearchMapInfoCard } from './SearchMapInfoCard/SearchMapInfoCard';
@@ -143,6 +143,7 @@ export { default as SearchMapPriceLabel } from './SearchMapPriceLabel/SearchMapP
 export { default as SearchResultsPanel } from './SearchResultsPanel/SearchResultsPanel';
 export { default as SelectMultipleFilter } from './SelectMultipleFilter/SelectMultipleFilter';
 export { default as SelectSingleFilter } from './SelectSingleFilter/SelectSingleFilter';
+export { default as SortBy } from './SortBy/SortBy';
 export { default as StripeConnectAccountStatusBox } from './StripeConnectAccountStatusBox/StripeConnectAccountStatusBox';
 export { default as StripePaymentAddress } from './StripePaymentAddress/StripePaymentAddress';
 export { default as UserCard } from './UserCard/UserCard';

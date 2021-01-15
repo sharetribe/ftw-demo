@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { ExternalLink } from '../../components';
 
-import css from './TopbarNotification.css';
+import css from './TopbarNotification.module.css';
 
 const TopbarNotification = props => {
   const { rootClassName, className } = props;

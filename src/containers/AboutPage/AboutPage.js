@@ -12,7 +12,7 @@ import {
   TopbarNotification,
 } from '../../components';
 
-import css from './AboutPage.css';
+import css from './AboutPage.module.css';
 import image from './about-us-1056.jpg';
 
 const AboutPage = () => {

@@ -20,6 +20,8 @@ exports[`ContactDetailsPage matches snapshot 1`] = `
     >
       <withRouter(Connect(TopbarContainerComponent))
         currentPage="ContactDetailsPage"
+        desktopClassName="desktopTopbar"
+        mobileClassName="mobileTopbar"
       />
       <UserNav
         className={null}
@@ -34,8 +36,12 @@ exports[`ContactDetailsPage matches snapshot 1`] = `
       className={null}
       rootClassName={null}
     >
-      <div>
-        <h1>
+      <div
+        className="content"
+      >
+        <h1
+          className="title"
+        >
           <FormattedMessage
             id="ContactDetailsPage.heading"
             values={Object {}}

@@ -24,7 +24,7 @@ import { TopbarSearchForm } from '../../forms';
 
 import MenuIcon from './MenuIcon';
 import SearchIcon from './SearchIcon';
-import css from './Topbar.css';
+import css from './Topbar.module.css';
 
 const MAX_MOBILE_SCREEN_WIDTH = 768;
 
@@ -246,6 +246,7 @@ class TopbarComponent extends Component {
           id="TopbarMobileMenu"
           isOpen={isMobileMenuOpen}
           onClose={this.handleMobileMenuClose}
+          usePortal
           onManageDisableScrolling={onManageDisableScrolling}
         >
           {authInProgress ? null : mobileMenu}
@@ -255,6 +256,7 @@ class TopbarComponent extends Component {
           containerClassName={css.modalContainer}
           isOpen={isMobileSearchOpen}
           onClose={this.handleMobileSearchClose}
+          usePortal
           onManageDisableScrolling={onManageDisableScrolling}
         >
           <div className={css.searchContainer}>
