@@ -12,7 +12,10 @@ export const apiBaseUrl = () => {
 
   // In development, the dev API server is running in a different port
   if (useDevApiServer) {
-    return `http://localhost:${port}`;
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      return `http://${hostname}:${port}`;
+    }
   }
 
   // Otherwise, use the same domain and port as the frontend

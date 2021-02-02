@@ -17,12 +17,17 @@ const app = express();
 
 // NOTE: CORS is only needed in this dev API server because it's
 // running in a different port than the main app.
-app.use(
+
+app.use((req, res, next) => {
+  const hostname = req.hostname;
+  const rootUrl = `${req.protocol}:\/\/${hostname}:3000`;
+
   cors({
-    origin: process.env.REACT_APP_CANONICAL_ROOT_URL,
+    origin: rootUrl,
     credentials: true,
-  })
-);
+  })(req, res, next);
+});
+
 app.use(cookieParser());
 app.use('/.well-known', wellKnownRouter);
 app.use('/api', apiRouter);

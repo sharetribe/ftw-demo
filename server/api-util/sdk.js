@@ -4,10 +4,16 @@ const Decimal = require('decimal.js');
 const log = require('../log');
 const sharetribeSdk = require('sharetribe-flex-sdk');
 
-const CLIENT_ID = process.env.REACT_APP_SHARETRIBE_SDK_CLIENT_ID;
 const CLIENT_SECRET = process.env.SHARETRIBE_SDK_CLIENT_SECRET;
 const USING_SSL = process.env.REACT_APP_SHARETRIBE_USING_SSL === 'true';
 const TRANSIT_VERBOSE = process.env.REACT_APP_SHARETRIBE_SDK_TRANSIT_VERBOSE === 'true';
+
+const hostnameToClientId = hostname => {
+  // Match the first sub domain for an UUID in form:
+  // 00000000-0000-0000-0000-000000000000.another-sub-domain.example.com
+  const match = /^(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\./.exec(hostname);
+  return match ? match[1] : null;
+};
 
 // Application type handlers for JS SDK.
 //
@@ -37,8 +43,11 @@ const memoryStore = token => {
 
 // Read the user token from the request cookie
 const getUserToken = req => {
+  const hostname = req.hostname;
+  const clientId = hostnameToClientId(hostname);
+
   const cookieTokenStore = sharetribeSdk.tokenStore.expressCookieStore({
-    clientId: CLIENT_ID,
+    clientId,
     req,
     secure: USING_SSL,
   });
@@ -78,13 +87,16 @@ exports.handleError = (res, error) => {
 };
 
 exports.getSdk = (req, res) => {
+  const hostname = req.hostname;
+  const clientId = hostnameToClientId(hostname);
+
   return sharetribeSdk.createInstance({
     transitVerbose: TRANSIT_VERBOSE,
-    clientId: CLIENT_ID,
+    clientId,
     httpAgent,
     httpsAgent,
     tokenStore: sharetribeSdk.tokenStore.expressCookieStore({
-      clientId: CLIENT_ID,
+      clientId,
       req,
       res,
       secure: USING_SSL,
@@ -96,11 +108,13 @@ exports.getSdk = (req, res) => {
 
 exports.getTrustedSdk = req => {
   const userToken = getUserToken(req);
+  const hostname = req.hostname;
+  const clientId = hostnameToClientId(hostname);
 
   // Initiate an SDK instance for token exchange
   const sdk = sharetribeSdk.createInstance({
     transitVerbose: TRANSIT_VERBOSE,
-    clientId: CLIENT_ID,
+    clientId,
     clientSecret: CLIENT_SECRET,
     httpAgent,
     httpsAgent,
@@ -118,7 +132,7 @@ exports.getTrustedSdk = req => {
       transitVerbose: TRANSIT_VERBOSE,
 
       // We don't need CLIENT_SECRET here anymore
-      clientId: CLIENT_ID,
+      clientId,
 
       // Important! Do not use a cookieTokenStore here but a memoryStore
       // instead so that we don't leak the token back to browser client.
