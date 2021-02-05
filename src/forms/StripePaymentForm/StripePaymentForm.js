@@ -86,7 +86,16 @@ const cardStyles = {
 };
 
 const OneTimePaymentWithCardElement = props => {
-  const { cardClasses, formId, handleStripeElementRef, hasCardError, error, label, intl } = props;
+  const {
+    cardClasses,
+    formId,
+    handleStripeElementRef,
+    hasCardError,
+    error,
+    label,
+    intl,
+    useDefaultTestData,
+  } = props;
   const labelText =
     label || intl.formatMessage({ id: 'StripePaymentForm.saveAfterOnetimePayment' });
   return (
@@ -94,8 +103,14 @@ const OneTimePaymentWithCardElement = props => {
       <label className={css.paymentLabel} htmlFor={`${formId}-card`}>
         <FormattedMessage id="StripePaymentForm.paymentCardDetails" />
       </label>
-      <div className={cardClasses} id={`${formId}-card`} ref={handleStripeElementRef} />
-      {hasCardError ? <span className={css.error}>{error}</span> : null}
+      {useDefaultTestData ? (
+        <>Use test card</>
+      ) : (
+        <>
+          <div className={cardClasses} id={`${formId}-card`} ref={handleStripeElementRef} />
+          {hasCardError ? <span className={css.error}>{error}</span> : null}
+        </>
+      )}
       <div className={css.saveForLaterUse}>
         <FieldCheckbox
           className={css.saveForLaterUseCheckbox}
@@ -125,6 +140,7 @@ const PaymentMethodSelector = props => {
     error,
     paymentMethod,
     intl,
+    useDefaultTestData,
   } = props;
   const last4Digits = defaultPaymentMethod.attributes.card.last4Digits;
   const labelText = intl.formatMessage(
@@ -151,6 +167,7 @@ const PaymentMethodSelector = props => {
           error={error}
           label={labelText}
           intl={intl}
+          useDefaultTestData={useDefaultTestData}
         />
       ) : null}
     </React.Fragment>
@@ -289,7 +306,8 @@ class StripePaymentForm extends Component {
     const { initialMessage } = values;
     const { cardValueValid, paymentMethod } = this.state;
     const billingDetailsKnown = hasHandledCardPayment || defaultPaymentMethod;
-    const onetimePaymentNeedsAttention = !billingDetailsKnown && !cardValueValid;
+    const onetimePaymentNeedsAttention =
+      !billingDetailsKnown && !cardValueValid && !this.props.useDefaultTestData;
 
     if (inProgress || onetimePaymentNeedsAttention) {
       // Already submitting or card value incomplete/invalid
@@ -298,7 +316,11 @@ class StripePaymentForm extends Component {
 
     const params = {
       message: initialMessage ? initialMessage.trim() : null,
-      card: this.card,
+      card: this.props.useDefaultTestData
+        ? {
+            token: config.stripe.testData.basicTestCardToken,
+          }
+        : card,
       formId,
       formValues: values,
       paymentMethod: getPaymentMethod(
@@ -328,6 +350,7 @@ class StripePaymentForm extends Component {
       form,
       hasHandledCardPayment,
       defaultPaymentMethod,
+      useDefaultTestData,
     } = formRenderProps;
 
     this.finalFormAPI = form;
@@ -392,9 +415,8 @@ class StripePaymentForm extends Component {
       this.state.paymentMethod,
       showPaymentMethodSelector
     );
-    const showOnetimePaymentFields = ['onetimeCardPayment', 'replaceCard'].includes(
-      selectedPaymentMethod
-    );
+    const showOnetimePaymentFields =
+      !!useDefaultTestData || ['onetimeCardPayment', 'replaceCard'].includes(selectedPaymentMethod);
     return hasStripeKey ? (
       <Form className={classes} onSubmit={handleSubmit}>
         {billingDetailsNeeded && !loadingData ? (
@@ -410,6 +432,7 @@ class StripePaymentForm extends Component {
                 error={this.state.error}
                 paymentMethod={selectedPaymentMethod}
                 intl={intl}
+                useDefaultTestData={useDefaultTestData}
               />
             ) : (
               <React.Fragment>
@@ -423,6 +446,7 @@ class StripePaymentForm extends Component {
                   hasCardError={hasCardError}
                   error={this.state.error}
                   intl={intl}
+                  useDefaultTestData={useDefaultTestData}
                 />
               </React.Fragment>
             )}
