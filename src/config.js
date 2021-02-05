@@ -1,6 +1,6 @@
 import * as custom from './marketplace-custom-config.js';
 import defaultLocationSearches from './default-location-searches';
-import { defaultMCC, stripePublishableKey, stripeCountryDetails } from './stripe-config';
+import { defaultMCC, stripePublishableKey, stripeCountryDetails, testData } from './stripe-config';
 import { currencyConfiguration } from './currency-config';
 
 const env = process.env.REACT_APP_ENV;
@@ -229,6 +229,7 @@ const config = {
     defaultMCC: defaultMCC,
     publishableKey: stripePublishableKey,
     supportedCountries: stripeCountryDetails,
+    testData: testData,
   },
   canonicalRootURL,
   address: {

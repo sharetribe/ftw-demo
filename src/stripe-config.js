@@ -1,3 +1,6 @@
+import { types as sdkTypes } from './util/sdkLoader';
+const { UUID } = sdkTypes;
+
 /* Stripe related configuration.
 
 NOTE: REACT_APP_STRIPE_PUBLISHABLE_KEY is mandatory environment variable.
@@ -328,6 +331,41 @@ export const stripeCountryDetails = [
     },
   },
 ];
+
+/**
+ * Stripe test data
+ *
+ * This data is for filling up the test values related to Stripe
+ * in the demo application to make testing easier.
+ */
+
+export const testData = {
+  basicTestCardToken: 'tok_visa',
+  basicTestCardDetails: {
+    id: new UUID('test-card'),
+    type: 'stripePaymentMethod',
+    attributes: {
+      type: 'stripe-payment-method/card',
+      stripePaymentMethodId: 'test-card',
+      card: {
+        brand: 'visa',
+        last4Digits: '4242',
+        expirationMonth: 4,
+        expirationYear: 2424,
+      },
+    },
+  },
+  address: {
+    addressLine1: 'Erottajankatu 19',
+    postal: '00130',
+    city: 'Helsinki',
+    country: 'FI',
+  },
+  accountType: 'individual',
+  country: 'FI',
+  bankAccountNumber: 'FI89370400440532013000',
+  bankAccountType: 'iban',
+};
 
 /*
 NOTE: This configuration will not be updated!
