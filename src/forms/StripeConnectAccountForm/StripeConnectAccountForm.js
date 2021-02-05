@@ -40,7 +40,16 @@ const countryCurrency = countryCode => {
 };
 
 const CreateStripeAccountFields = props => {
-  const { disabled, countryLabel, showAsRequired, form, values, intl, currentUserId } = props;
+  const {
+    disabled,
+    countryLabel,
+    showAsRequired,
+    form,
+    values,
+    intl,
+    currentUserId,
+    useDefaultTestData,
+  } = props;
 
   /*
   We pass some default values to Stripe when creating a new Stripe account in order to reduce couple of steps from Connect Onboarding form.
@@ -138,6 +147,7 @@ const CreateStripeAccountFields = props => {
           country={country}
           currency={countryCurrency(country)}
           validate={validators.required(' ')}
+          useDefaultTestData={useDefaultTestData}
         />
       ) : null}
     </div>
@@ -242,6 +252,7 @@ const StripeConnectAccountFormComponent = props => {
           values,
           stripeConnected,
           currentUser,
+          useDefaultTestData,
         } = fieldRenderProps;
 
         const accountDataLoaded = stripeConnected && stripeAccountFetched && savedCountry;
@@ -278,6 +289,7 @@ const StripeConnectAccountFormComponent = props => {
             form={form}
             values={values}
             intl={intl}
+            useDefaultTestData={useDefaultTestData}
           />
         ) : (
           <UpdateStripeAccountFields

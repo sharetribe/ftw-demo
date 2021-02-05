@@ -42,7 +42,7 @@ class TokenInputFieldComponent extends Component {
     // Fill initialState with input type specific data
     BANK_ACCOUNT_INPUTS.forEach(inputType => {
       this.initialState[inputType] = {
-        value: '',
+        value: this.props.useDefaultTestData ? config.stripe.testData.bankAccountNumber : null,
         touched: false,
         error: formatFieldMessage(intl, inputType, 'required'),
       };
@@ -76,6 +76,15 @@ class TokenInputFieldComponent extends Component {
     }
     this.stripe = window.Stripe(config.stripe.publishableKey);
     this._isMounted = true;
+
+    if (!!this.props.useDefaultTestData) {
+      this.handleInputChange(
+        { target: { value: config.stripe.testData.bankAccountNumber } },
+        config.stripe.testData.bankAccountType,
+        config.stripe.testData.country,
+        this.props.intl
+      );
+    }
   }
 
   componentDidUpdate(prevProps) {
