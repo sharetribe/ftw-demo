@@ -98,6 +98,18 @@ exports[`CheckoutPage matches snapshot 1`] = `
       <section
         className="paymentContainer"
       >
+        <Button
+          checkmarkClassName={null}
+          className="stripeTestDataButton"
+          disabled={false}
+          inProgress={false}
+          onClick={[Function]}
+          ready={false}
+          rootClassName={null}
+          spinnerClassName={null}
+        >
+          Fill in test details
+        </Button>
         <injectIntl(StripePaymentForm)
           authorDisplayName="author display name"
           className="paymentForm"
@@ -118,6 +130,7 @@ exports[`CheckoutPage matches snapshot 1`] = `
           paymentInfo="CheckoutPage.paymentInfo"
           paymentIntent={null}
           showInitialMessageInput={true}
+          useDefaultTestData={false}
         />
       </section>
     </div>
