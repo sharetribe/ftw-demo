@@ -1,3 +1,5 @@
+@import '../../styles/propertySets.css';
+
 .content {
   @media (--viewportMedium) {
     margin: 32px auto 0 auto;
@@ -23,4 +25,11 @@
   @media (--viewportMedium) {
     margin-bottom: 47px;
   }
+}
+
+.stripeTestDataButton {
+  @apply --marketplaceSmallFontStyles;
+  width: 100%;
+  min-height: 40px;
+  margin-top: 24px;
 }
