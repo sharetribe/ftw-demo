@@ -146,7 +146,7 @@ class PaymentMethodsForm extends Component {
   }
   handleSubmit(values) {
     const { onSubmit, inProgress, formId } = this.props;
-    const cardInputNeedsAttention = !this.state.cardValueValid;
+    const cardInputNeedsAttention = !this.state.cardValueValid && !this.props.useDefaultTestData;
 
     if (inProgress || cardInputNeedsAttention) {
       // Already submitting or card value incomplete/invalid
@@ -155,7 +155,7 @@ class PaymentMethodsForm extends Component {
 
     const params = {
       stripe: this.stripe,
-      card: this.card,
+      card: this.props.useDefaultTestData ? { payment_method: 'pm_card_visa' } : this.card,
       formId,
       formValues: values,
     };
@@ -177,10 +177,11 @@ class PaymentMethodsForm extends Component {
       createStripeCustomerError,
       handleCardSetupError,
       form,
+      useDefaultTestData,
     } = formRenderProps;
 
     this.finalFormAPI = form;
-    const cardInputNeedsAttention = !this.state.cardValueValid;
+    const cardInputNeedsAttention = !this.state.cardValueValid && !useDefaultTestData;
     const submitDisabled = invalid || cardInputNeedsAttention || submitInProgress;
     const hasCardError = this.state.error && !submitInProgress;
     const classes = classNames(rootClassName || css.root, className);
@@ -219,19 +220,25 @@ class PaymentMethodsForm extends Component {
 
     return hasStripeKey ? (
       <Form className={classes} onSubmit={handleSubmit}>
-        <label className={css.paymentLabel} htmlFor={`${formId}-card`}>
-          <FormattedMessage id="PaymentMethodsForm.paymentCardDetails" />
-        </label>
+        {useDefaultTestData ? (
+          <>Test card</>
+        ) : (
+          <>
+            <label className={css.paymentLabel} htmlFor={`${formId}-card`}>
+              <FormattedMessage id="PaymentMethodsForm.paymentCardDetails" />
+            </label>
 
-        <div
-          className={cardClasses}
-          id={`${formId}-card`}
-          ref={el => {
-            this.cardContainer = el;
-          }}
-        />
-        <div className={css.infoText}>{infoText}</div>
-        {hasCardError ? <span className={css.error}>{this.state.error}</span> : null}
+            <div
+              className={cardClasses}
+              id={`${formId}-card`}
+              ref={el => {
+                this.cardContainer = el;
+              }}
+            />
+            <div className={css.infoText}>{infoText}</div>
+            {hasCardError ? <span className={css.error}>{this.state.error}</span> : null}
+          </>
+        )}
         <div className={css.paymentAddressField}>
           <h3 className={css.billingHeading}>
             <FormattedMessage id="PaymentMethodsForm.billingDetails" />

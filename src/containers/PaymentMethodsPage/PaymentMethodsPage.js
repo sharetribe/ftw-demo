@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { bool, func, object } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import config from '../../config';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import { ensureCurrentUser, ensureStripeCustomer, ensurePaymentMethodCard } from '../../util/data';
 import { propTypes } from '../../util/types';
@@ -9,6 +10,7 @@ import { savePaymentMethod, deletePaymentMethod } from '../../ducks/paymentMetho
 import { handleCardSetup } from '../../ducks/stripe.duck';
 import { manageDisableScrolling, isScrollingDisabled } from '../../ducks/UI.duck';
 import {
+  Button,
   SavedCardDetails,
   LayoutSideNavigation,
   LayoutWrapperMain,
@@ -28,6 +30,7 @@ import css from './PaymentMethodsPage.module.css';
 const PaymentMethodsPageComponent = props => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cardState, setCardState] = useState(null);
+  const [useDefaultTestData, setUseDefaultTestData] = useState(false);
 
   const {
     currentUser,
@@ -136,7 +139,13 @@ const PaymentMethodsPageComponent = props => {
     ? `${ensuredCurrentUser.attributes.profile.firstName} ${ensuredCurrentUser.attributes.profile.lastName}`
     : null;
 
-  const initalValuesForStripePayment = { name: userName };
+  const initalValuesForStripePayment = !useDefaultTestData
+    ? { name: userName }
+    : { name: userName, ...config.stripe.testData.address };
+
+  const handleInitialTestData = () => {
+    setUseDefaultTestData(true);
+  };
 
   const card = hasDefaultPaymentMethod
     ? ensurePaymentMethodCard(currentUser.stripeCustomer.defaultPaymentMethod).attributes.card
@@ -173,19 +182,25 @@ const PaymentMethodsPageComponent = props => {
                   />
                 ) : null}
                 {showForm ? (
-                  <PaymentMethodsForm
-                    className={css.paymentForm}
-                    formId="PaymentMethodsForm"
-                    initialValues={initalValuesForStripePayment}
-                    onSubmit={handleSubmit}
-                    handleRemovePaymentMethod={handleRemovePaymentMethod}
-                    hasDefaultPaymentMethod={hasDefaultPaymentMethod}
-                    addPaymentMethodError={addPaymentMethodError}
-                    deletePaymentMethodError={deletePaymentMethodError}
-                    createStripeCustomerError={createStripeCustomerError}
-                    handleCardSetupError={handleCardSetupError}
-                    inProgress={isSubmitting}
-                  />
+                  <>
+                    <Button className={css.stripeTestDataButton} onClick={handleInitialTestData}>
+                      Fill in test details
+                    </Button>
+                    <PaymentMethodsForm
+                      className={css.paymentForm}
+                      formId="PaymentMethodsForm"
+                      initialValues={initalValuesForStripePayment}
+                      onSubmit={handleSubmit}
+                      handleRemovePaymentMethod={handleRemovePaymentMethod}
+                      hasDefaultPaymentMethod={hasDefaultPaymentMethod}
+                      addPaymentMethodError={addPaymentMethodError}
+                      deletePaymentMethodError={deletePaymentMethodError}
+                      createStripeCustomerError={createStripeCustomerError}
+                      handleCardSetupError={handleCardSetupError}
+                      inProgress={isSubmitting}
+                      useDefaultTestData={useDefaultTestData}
+                    />
+                  </>
                 ) : null}
               </>
             )}
