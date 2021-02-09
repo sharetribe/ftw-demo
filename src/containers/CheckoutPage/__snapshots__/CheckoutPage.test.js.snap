@@ -108,7 +108,10 @@ exports[`CheckoutPage matches snapshot 1`] = `
           rootClassName={null}
           spinnerClassName={null}
         >
-          Fill in test details
+          <FormattedMessage
+            id="CheckoutPage.fillInTestDetails"
+            values={Object {}}
+          />
         </Button>
         <injectIntl(StripePaymentForm)
           authorDisplayName="author display name"

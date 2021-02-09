@@ -104,7 +104,12 @@ const OneTimePaymentWithCardElement = props => {
         <FormattedMessage id="StripePaymentForm.paymentCardDetails" />
       </label>
       {useDefaultTestData ? (
-        <>Use test card</>
+        <FormattedMessage
+          id="StripePaymentForm.useDefaultTestCard"
+          values={{
+            last4: config.stripe.testData.basicTestCardDetails.attributes.card.last4Digits,
+          }}
+        />
       ) : (
         <>
           <div className={cardClasses} id={`${formId}-card`} ref={handleStripeElementRef} />

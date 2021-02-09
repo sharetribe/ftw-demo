@@ -437,7 +437,7 @@ class EditListingWizard extends Component {
                   <FormattedMessage id="EditListingWizard.payoutModalInfo" />
                 </p>
                 <Button className={css.stripeTestDataButton} onClick={handleStripeTestData}>
-                  Fill in test details
+                  <FormattedMessage id="EditListingWizard.fillInTestDetails" />
                 </Button>
                 <StripeConnectAccountForm
                   disabled={formDisabled}

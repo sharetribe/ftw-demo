@@ -53,7 +53,10 @@ exports[`StripePayoutPage matches snapshot with Stripe connected 1`] = `
           rootClassName={null}
           spinnerClassName={null}
         >
-          Fill in test details
+          <FormattedMessage
+            id="StripePayoutPage.fillInTestDetails"
+            values={Object {}}
+          />
         </Button>
         <injectIntl(StripeConnectAccountFormComponent)
           currentUser={
@@ -169,7 +172,10 @@ exports[`StripePayoutPage matches snapshot with Stripe not connected 1`] = `
           rootClassName={null}
           spinnerClassName={null}
         >
-          Fill in test details
+          <FormattedMessage
+            id="StripePayoutPage.fillInTestDetails"
+            values={Object {}}
+          />
         </Button>
         <injectIntl(StripeConnectAccountFormComponent)
           currentUser={
@@ -275,7 +281,10 @@ exports[`StripePayoutPage matches snapshot with details submitted 1`] = `
           rootClassName={null}
           spinnerClassName={null}
         >
-          Fill in test details
+          <FormattedMessage
+            id="StripePayoutPage.fillInTestDetails"
+            values={Object {}}
+          />
         </Button>
         <injectIntl(StripeConnectAccountFormComponent)
           currentUser={

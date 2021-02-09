@@ -807,7 +807,7 @@ export class CheckoutPageComponent extends Component {
                       className={css.stripeTestDataButton}
                       onClick={this.handleInitialTestData}
                     >
-                      Fill in test details
+                      <FormattedMessage id="CheckoutPage.fillInTestDetails" />
                     </Button>
                   ) : null}
                   <StripePaymentForm

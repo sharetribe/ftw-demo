@@ -221,7 +221,12 @@ class PaymentMethodsForm extends Component {
     return hasStripeKey ? (
       <Form className={classes} onSubmit={handleSubmit}>
         {useDefaultTestData ? (
-          <>Test card</>
+          <FormattedMessage
+            id="PaymentMethodsForm.useDefaultTestCard"
+            values={{
+              last4: config.stripe.testData.basicTestCardDetails.attributes.card.last4Digits,
+            }}
+          />
         ) : (
           <>
             <label className={css.paymentLabel} htmlFor={`${formId}-card`}>

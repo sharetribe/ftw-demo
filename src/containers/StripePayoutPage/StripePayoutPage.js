@@ -178,7 +178,7 @@ export const StripePayoutPageComponent = props => {
             ) : (
               <>
                 <Button className={css.stripeTestDataButton} onClick={handleStripeTestData}>
-                  Fill in test details
+                  <FormattedMessage id="StripePayoutPage.fillInTestDetails" />
                 </Button>
                 <StripeConnectAccountForm
                   disabled={formDisabled}

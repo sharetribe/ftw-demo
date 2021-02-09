@@ -120,6 +120,7 @@ const PaymentMethodsPageComponent = props => {
 
   const handleRemovePaymentMethod = () => {
     onDeletePaymentMethod().then(() => {
+      setUseDefaultTestData(false);
       fetchStripeCustomer();
     });
   };
@@ -184,7 +185,7 @@ const PaymentMethodsPageComponent = props => {
                 {showForm ? (
                   <>
                     <Button className={css.stripeTestDataButton} onClick={handleInitialTestData}>
-                      Fill in test details
+                      <FormattedMessage id="PaymentMethodsPage.fillInTestDetails" />
                     </Button>
                     <PaymentMethodsForm
                       className={css.paymentForm}
