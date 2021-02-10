@@ -340,6 +340,7 @@ export const stripeCountryDetails = [
  */
 
 export const testData = {
+  basicTestPaymentMethodToken: 'pm_card_visa',
   basicTestCardToken: 'tok_visa',
   basicTestCardDetails: {
     id: new UUID('test-card'),

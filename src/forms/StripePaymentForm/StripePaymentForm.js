@@ -319,6 +319,9 @@ class StripePaymentForm extends Component {
       return;
     }
 
+    // Demo specific: If the user wants to use default test values,
+    // we should pass the default test token from Stripe instead of using
+    // card from Stripe Element (it's not possible to pass default value to that).
     const params = {
       message: initialMessage ? initialMessage.trim() : null,
       card: this.props.useDefaultTestData

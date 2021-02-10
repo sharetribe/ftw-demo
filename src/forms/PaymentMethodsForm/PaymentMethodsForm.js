@@ -153,9 +153,14 @@ class PaymentMethodsForm extends Component {
       return;
     }
 
+    // Demo specific: If the user wants to use default test values,
+    // we should pass the default test token from Stripe instead of using
+    // card from Stripe Element (it's not possible to pass default value to that).
     const params = {
       stripe: this.stripe,
-      card: this.props.useDefaultTestData ? { payment_method: 'pm_card_visa' } : this.card,
+      card: this.props.useDefaultTestData
+        ? { payment_method: config.stripe.testData.basicTestPaymentMethodToken }
+        : this.card,
       formId,
       formValues: values,
     };
