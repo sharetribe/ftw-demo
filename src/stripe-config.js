@@ -357,7 +357,7 @@ export const testData = {
     },
   },
   address: {
-    addressLine1: 'Erottajankatu 19',
+    addressLine1: 'Main Street 123',
     postal: '00130',
     city: 'Helsinki',
     country: 'FI',
