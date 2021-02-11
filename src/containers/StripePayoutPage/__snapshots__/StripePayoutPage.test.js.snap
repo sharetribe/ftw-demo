@@ -43,6 +43,7 @@ exports[`StripePayoutPage matches snapshot with Stripe connected 1`] = `
             values={Object {}}
           />
         </h1>
+        <FillDemoDataButton />
         <injectIntl(StripeConnectAccountFormComponent)
           currentUser={
             Object {
@@ -78,6 +79,7 @@ exports[`StripePayoutPage matches snapshot with Stripe connected 1`] = `
           }
           disabled={false}
           inProgress={false}
+          initialValues={null}
           onChange={[Function]}
           onGetStripeConnectAccountLink={[Function]}
           onSubmit={[Function]}
@@ -89,6 +91,7 @@ exports[`StripePayoutPage matches snapshot with Stripe connected 1`] = `
           stripeBankAccountLastDigits={null}
           stripeConnected={false}
           submitButtonText="StripePayoutPage.submitButtonText"
+          useDefaultTestData={false}
         />
       </div>
     </LayoutWrapperMain>
@@ -145,6 +148,7 @@ exports[`StripePayoutPage matches snapshot with Stripe not connected 1`] = `
             values={Object {}}
           />
         </h1>
+        <FillDemoDataButton />
         <injectIntl(StripeConnectAccountFormComponent)
           currentUser={
             Object {
@@ -170,6 +174,7 @@ exports[`StripePayoutPage matches snapshot with Stripe not connected 1`] = `
           }
           disabled={false}
           inProgress={false}
+          initialValues={null}
           onChange={[Function]}
           onGetStripeConnectAccountLink={[Function]}
           onSubmit={[Function]}
@@ -181,6 +186,7 @@ exports[`StripePayoutPage matches snapshot with Stripe not connected 1`] = `
           stripeBankAccountLastDigits={null}
           stripeConnected={false}
           submitButtonText="StripePayoutPage.submitButtonText"
+          useDefaultTestData={false}
         />
       </div>
     </LayoutWrapperMain>
@@ -237,6 +243,7 @@ exports[`StripePayoutPage matches snapshot with details submitted 1`] = `
             values={Object {}}
           />
         </h1>
+        <FillDemoDataButton />
         <injectIntl(StripeConnectAccountFormComponent)
           currentUser={
             Object {
@@ -272,6 +279,7 @@ exports[`StripePayoutPage matches snapshot with details submitted 1`] = `
           }
           disabled={false}
           inProgress={false}
+          initialValues={null}
           onChange={[Function]}
           onGetStripeConnectAccountLink={[Function]}
           onSubmit={[Function]}
@@ -283,6 +291,7 @@ exports[`StripePayoutPage matches snapshot with details submitted 1`] = `
           stripeBankAccountLastDigits={null}
           stripeConnected={false}
           submitButtonText="StripePayoutPage.submitButtonText"
+          useDefaultTestData={false}
         />
       </div>
     </LayoutWrapperMain>

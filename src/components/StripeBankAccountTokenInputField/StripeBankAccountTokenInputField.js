@@ -40,9 +40,11 @@ class TokenInputFieldComponent extends Component {
     };
 
     // Fill initialState with input type specific data
+    // Demo specific: If the user wants to use default test values,
+    // we need to add the default bankAccountNumber as inital value
     BANK_ACCOUNT_INPUTS.forEach(inputType => {
       this.initialState[inputType] = {
-        value: '',
+        value: this.props.useDefaultTestData ? config.stripe.testData.bankAccountNumber : null,
         touched: false,
         error: formatFieldMessage(intl, inputType, 'required'),
       };
@@ -76,6 +78,19 @@ class TokenInputFieldComponent extends Component {
     }
     this.stripe = window.Stripe(config.stripe.publishableKey);
     this._isMounted = true;
+
+    // Demo specific: If the user wants to use default test values,
+    // we need to trigger fetching the bank account token from Stripe
+    // separately (as the value is initial value and the field has not changed yet actually).
+    // This is a bit hacky, but it keeps the diff in minimum.
+    if (!!this.props.useDefaultTestData) {
+      this.handleInputChange(
+        { target: { value: config.stripe.testData.bankAccountNumber } },
+        config.stripe.testData.bankAccountType,
+        config.stripe.testData.country,
+        this.props.intl
+      );
+    }
   }
 
   componentDidUpdate(prevProps) {

@@ -141,12 +141,11 @@
 
   @media (--viewportMedium) {
     margin-top: 27px;
-    margin-bottom: 30px;
+    margin-bottom: 22px; /* Demo customization */
   }
 
   @media (--viewportLarge) {
     margin-top: 0px;
-    margin-bottom: 54px;
     padding: 0;
   }
 }

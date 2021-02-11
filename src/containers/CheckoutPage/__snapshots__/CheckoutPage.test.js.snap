@@ -98,6 +98,7 @@ exports[`CheckoutPage matches snapshot 1`] = `
       <section
         className="paymentContainer"
       >
+        <FillDemoDataButton />
         <injectIntl(StripePaymentForm)
           authorDisplayName="author display name"
           className="paymentForm"
@@ -118,6 +119,7 @@ exports[`CheckoutPage matches snapshot 1`] = `
           paymentInfo="CheckoutPage.paymentInfo"
           paymentIntent={null}
           showInitialMessageInput={true}
+          useDefaultTestData={false}
         />
       </section>
     </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { bool, func, oneOf, shape } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -14,6 +14,7 @@ import {
   getStripeConnectAccountLink,
 } from '../../ducks/stripeConnectAccount.duck';
 import {
+  Button,
   NamedRedirect,
   LayoutSideNavigation,
   LayoutWrapperMain,
@@ -30,6 +31,7 @@ import { TopbarContainer } from '..';
 import { savePayoutDetails, loadData } from './StripePayoutPage.duck';
 
 import css from './StripePayoutPage.module.css';
+import cssForDemo from './StripePayoutPageDemoChanges.module.css';
 
 const STRIPE_ONBOARDING_RETURN_URL_SUCCESS = 'success';
 const STRIPE_ONBOARDING_RETURN_URL_FAILURE = 'failure';
@@ -95,6 +97,14 @@ export const StripePayoutPageComponent = props => {
     intl,
   } = props;
 
+  // For demo:
+  const [useDefaultTestData, setUseDefaultTestData] = useState(false);
+
+  const stripeDefaultTestData = config.stripe.testData;
+  const stripeInitialValues = useDefaultTestData
+    ? { accountType: stripeDefaultTestData.accountType, country: stripeDefaultTestData.country }
+    : null;
+
   const { returnURLType } = params;
   const ensuredCurrentUser = ensureCurrentUser(currentUser);
   const currentUserLoaded = !!ensuredCurrentUser.id;
@@ -142,6 +152,21 @@ export const StripePayoutPageComponent = props => {
     handleGetStripeConnectAccountLink('custom_account_verification')();
   }
 
+  // Demo customization begins
+
+  const handleStripeTestData = () => {
+    setUseDefaultTestData(true);
+  };
+
+  const FillDemoDataButton = () =>
+    currentUserLoaded && !stripeConnected ? (
+      <Button className={cssForDemo.stripeTestDataButton} onClick={handleStripeTestData}>
+        <FormattedMessage id="PaymentMethodsPage.fillInTestDetails" />
+      </Button>
+    ) : null;
+
+  // Demo customization ends
+
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
       <LayoutSideNavigation>
@@ -159,6 +184,7 @@ export const StripePayoutPageComponent = props => {
             <h1 className={css.title}>
               <FormattedMessage id="StripePayoutPage.heading" />
             </h1>
+            <FillDemoDataButton />
             {!currentUserLoaded ? (
               <FormattedMessage id="StripePayoutPage.loadingData" />
             ) : returnedAbnormallyFromStripe && !getAccountLinkError ? (
@@ -183,6 +209,8 @@ export const StripePayoutPageComponent = props => {
                 onSubmit={onPayoutDetailsFormSubmit}
                 onGetStripeConnectAccountLink={handleGetStripeConnectAccountLink}
                 stripeConnected={stripeConnected}
+                initialValues={stripeInitialValues}
+                useDefaultTestData={useDefaultTestData}
               >
                 {stripeConnected && !returnedAbnormallyFromStripe && showVerificationNeeded ? (
                   <StripeConnectAccountStatusBox

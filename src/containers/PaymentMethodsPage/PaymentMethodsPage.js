@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { bool, func, object } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import config from '../../config';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import { ensureCurrentUser, ensureStripeCustomer, ensurePaymentMethodCard } from '../../util/data';
 import { propTypes } from '../../util/types';
@@ -9,6 +10,7 @@ import { savePaymentMethod, deletePaymentMethod } from '../../ducks/paymentMetho
 import { handleCardSetup } from '../../ducks/stripe.duck';
 import { manageDisableScrolling, isScrollingDisabled } from '../../ducks/UI.duck';
 import {
+  Button,
   SavedCardDetails,
   LayoutSideNavigation,
   LayoutWrapperMain,
@@ -24,10 +26,14 @@ import { PaymentMethodsForm } from '../../forms';
 import { createStripeSetupIntent, stripeCustomer, loadData } from './PaymentMethodsPage.duck.js';
 
 import css from './PaymentMethodsPage.module.css';
+import cssForDemo from './PaymentMethodsPageDemoChanges.module.css';
 
 const PaymentMethodsPageComponent = props => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cardState, setCardState] = useState(null);
+
+  // For demo:
+  const [useDefaultTestData, setUseDefaultTestData] = useState(false);
 
   const {
     currentUser,
@@ -117,6 +123,7 @@ const PaymentMethodsPageComponent = props => {
 
   const handleRemovePaymentMethod = () => {
     onDeletePaymentMethod().then(() => {
+      setUseDefaultTestData(false);
       fetchStripeCustomer();
     });
   };
@@ -136,7 +143,9 @@ const PaymentMethodsPageComponent = props => {
     ? `${ensuredCurrentUser.attributes.profile.firstName} ${ensuredCurrentUser.attributes.profile.lastName}`
     : null;
 
-  const initalValuesForStripePayment = { name: userName };
+  const initalValuesForStripePayment = !useDefaultTestData
+    ? { name: userName }
+    : { name: userName, ...config.stripe.testData.address };
 
   const card = hasDefaultPaymentMethod
     ? ensurePaymentMethodCard(currentUser.stripeCustomer.defaultPaymentMethod).attributes.card
@@ -144,6 +153,21 @@ const PaymentMethodsPageComponent = props => {
 
   const showForm = cardState === 'replaceCard' || !hasDefaultPaymentMethod;
   const showCardDetails = !!hasDefaultPaymentMethod;
+
+  // Demo customization begins
+  const handleInitialTestData = () => {
+    setUseDefaultTestData(true);
+  };
+
+  const FillDemoDataButton = () =>
+    showForm ? (
+      <Button className={cssForDemo.stripeTestDataButton} onClick={handleInitialTestData}>
+        <FormattedMessage id="PaymentMethodsPage.fillInTestDetails" />
+      </Button>
+    ) : null;
+
+  // Demo customization ends
+
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
       <LayoutSideNavigation>
@@ -172,6 +196,8 @@ const PaymentMethodsPageComponent = props => {
                     deletePaymentMethodInProgress={deletePaymentMethodInProgress}
                   />
                 ) : null}
+                <FillDemoDataButton />
+
                 {showForm ? (
                   <PaymentMethodsForm
                     className={css.paymentForm}
@@ -185,6 +211,7 @@ const PaymentMethodsPageComponent = props => {
                     createStripeCustomerError={createStripeCustomerError}
                     handleCardSetupError={handleCardSetupError}
                     inProgress={isSubmitting}
+                    useDefaultTestData={useDefaultTestData}
                   />
                 ) : null}
               </>

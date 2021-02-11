@@ -146,16 +146,21 @@ class PaymentMethodsForm extends Component {
   }
   handleSubmit(values) {
     const { onSubmit, inProgress, formId } = this.props;
-    const cardInputNeedsAttention = !this.state.cardValueValid;
+    const cardInputNeedsAttention = !this.state.cardValueValid && !this.props.useDefaultTestData;
 
     if (inProgress || cardInputNeedsAttention) {
       // Already submitting or card value incomplete/invalid
       return;
     }
 
+    // Demo specific: If the user wants to use default test values,
+    // we should pass the default test token from Stripe instead of using
+    // card from Stripe Element (it's not possible to pass default value to that).
     const params = {
       stripe: this.stripe,
-      card: this.card,
+      card: this.props.useDefaultTestData
+        ? { payment_method: config.stripe.testData.basicTestPaymentMethodToken }
+        : this.card,
       formId,
       formValues: values,
     };
@@ -177,10 +182,11 @@ class PaymentMethodsForm extends Component {
       createStripeCustomerError,
       handleCardSetupError,
       form,
+      useDefaultTestData,
     } = formRenderProps;
 
     this.finalFormAPI = form;
-    const cardInputNeedsAttention = !this.state.cardValueValid;
+    const cardInputNeedsAttention = !this.state.cardValueValid && !useDefaultTestData;
     const submitDisabled = invalid || cardInputNeedsAttention || submitInProgress;
     const hasCardError = this.state.error && !submitInProgress;
     const classes = classNames(rootClassName || css.root, className);
@@ -219,19 +225,30 @@ class PaymentMethodsForm extends Component {
 
     return hasStripeKey ? (
       <Form className={classes} onSubmit={handleSubmit}>
-        <label className={css.paymentLabel} htmlFor={`${formId}-card`}>
-          <FormattedMessage id="PaymentMethodsForm.paymentCardDetails" />
-        </label>
+        {useDefaultTestData ? (
+          <FormattedMessage
+            id="PaymentMethodsForm.useDefaultTestCard"
+            values={{
+              last4: config.stripe.testData.basicTestCardDetails.attributes.card.last4Digits,
+            }}
+          />
+        ) : (
+          <>
+            <label className={css.paymentLabel} htmlFor={`${formId}-card`}>
+              <FormattedMessage id="PaymentMethodsForm.paymentCardDetails" />
+            </label>
 
-        <div
-          className={cardClasses}
-          id={`${formId}-card`}
-          ref={el => {
-            this.cardContainer = el;
-          }}
-        />
-        <div className={css.infoText}>{infoText}</div>
-        {hasCardError ? <span className={css.error}>{this.state.error}</span> : null}
+            <div
+              className={cardClasses}
+              id={`${formId}-card`}
+              ref={el => {
+                this.cardContainer = el;
+              }}
+            />
+            <div className={css.infoText}>{infoText}</div>
+            {hasCardError ? <span className={css.error}>{this.state.error}</span> : null}
+          </>
+        )}
         <div className={css.paymentAddressField}>
           <h3 className={css.billingHeading}>
             <FormattedMessage id="PaymentMethodsForm.billingDetails" />

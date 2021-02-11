@@ -39,6 +39,7 @@ import {
   NamedRedirect,
   Page,
   ResponsiveImage,
+  Button,
 } from '../../components';
 import { StripePaymentForm } from '../../forms';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
@@ -55,6 +56,7 @@ import {
 } from './CheckoutPage.duck';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
 import css from './CheckoutPage.module.css';
+import cssForDemo from './CheckoutPageDemoChanges.module.css';
 
 const STORAGE_KEY = 'CheckoutPage';
 
@@ -101,6 +103,7 @@ export class CheckoutPageComponent extends Component {
       pageData: {},
       dataLoaded: false,
       submitting: false,
+      useDefaultTestData: false,
     };
     this.stripe = null;
 
@@ -108,6 +111,9 @@ export class CheckoutPageComponent extends Component {
     this.loadInitialData = this.loadInitialData.bind(this);
     this.handlePaymentIntent = this.handlePaymentIntent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    // For demo:
+    this.handleInitialTestData = this.handleInitialTestData.bind(this);
   }
 
   componentDidMount() {
@@ -490,6 +496,11 @@ export class CheckoutPageComponent extends Component {
     }
   }
 
+  // For demo:
+  handleInitialTestData = () => {
+    this.setState({ useDefaultTestData: true });
+  };
+
   render() {
     const {
       scrollingDisabled,
@@ -746,7 +757,20 @@ export class CheckoutPageComponent extends Component {
     // If your marketplace works mostly in one country you can use initial values to select country automatically
     // e.g. {country: 'FI'}
 
-    const initalValuesForStripePayment = { name: userName };
+    const initalValuesForStripePayment = !this.state.useDefaultTestData
+      ? { name: userName }
+      : { name: userName, ...config.stripe.testData.address };
+
+    // Demo customization begins
+    const showFillDemoDataButton = showPaymentForm && !hasDefaultPaymentMethod;
+
+    const FillDemoDataButton = () =>
+      showFillDemoDataButton ? (
+        <Button className={cssForDemo.stripeTestDataButton} onClick={this.handleInitialTestData}>
+          <FormattedMessage id="EditListingWizard.fillInTestDetails" />
+        </Button>
+      ) : null;
+    // Demo customization ends
 
     return (
       <Page {...pageProps}>
@@ -791,6 +815,7 @@ export class CheckoutPageComponent extends Component {
                   />
                 </p>
               ) : null}
+              <FillDemoDataButton />
               {showPaymentForm ? (
                 <StripePaymentForm
                   className={css.paymentForm}
@@ -811,6 +836,7 @@ export class CheckoutPageComponent extends Component {
                   }
                   paymentIntent={paymentIntent}
                   onStripeInitialized={this.onStripeInitialized}
+                  useDefaultTestData={this.state.useDefaultTestData}
                 />
               ) : null}
               {isPaymentExpired ? (
