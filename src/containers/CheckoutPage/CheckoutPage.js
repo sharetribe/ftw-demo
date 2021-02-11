@@ -56,6 +56,7 @@ import {
 } from './CheckoutPage.duck';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
 import css from './CheckoutPage.module.css';
+import cssForDemo from './CheckoutPageDemoChanges.module.css';
 
 const STORAGE_KEY = 'CheckoutPage';
 
@@ -110,6 +111,8 @@ export class CheckoutPageComponent extends Component {
     this.loadInitialData = this.loadInitialData.bind(this);
     this.handlePaymentIntent = this.handlePaymentIntent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    // For demo:
     this.handleInitialTestData = this.handleInitialTestData.bind(this);
   }
 
@@ -465,10 +468,6 @@ export class CheckoutPageComponent extends Component {
       });
   }
 
-  handleInitialTestData = () => {
-    this.setState({ useDefaultTestData: true });
-  };
-
   onStripeInitialized(stripe) {
     this.stripe = stripe;
 
@@ -496,6 +495,11 @@ export class CheckoutPageComponent extends Component {
       onRetrievePaymentIntent({ stripe, stripePaymentIntentClientSecret });
     }
   }
+
+  // For demo:
+  handleInitialTestData = () => {
+    this.setState({ useDefaultTestData: true });
+  };
 
   render() {
     const {
@@ -757,6 +761,17 @@ export class CheckoutPageComponent extends Component {
       ? { name: userName }
       : { name: userName, ...config.stripe.testData.address };
 
+    // Demo customization begins
+    const showFillDemoDataButton = showPaymentForm && !hasDefaultPaymentMethod;
+
+    const FillDemoDataButton = () =>
+      showFillDemoDataButton ? (
+        <Button className={cssForDemo.stripeTestDataButton} onClick={this.handleInitialTestData}>
+          <FormattedMessage id="EditListingWizard.fillInTestDetails" />
+        </Button>
+      ) : null;
+    // Demo customization ends
+
     return (
       <Page {...pageProps}>
         {topbar}
@@ -800,40 +815,29 @@ export class CheckoutPageComponent extends Component {
                   />
                 </p>
               ) : null}
+              <FillDemoDataButton />
               {showPaymentForm ? (
-                <>
-                  {!hasDefaultPaymentMethod ? (
-                    <Button
-                      className={css.stripeTestDataButton}
-                      onClick={this.handleInitialTestData}
-                    >
-                      <FormattedMessage id="CheckoutPage.fillInTestDetails" />
-                    </Button>
-                  ) : null}
-                  <StripePaymentForm
-                    className={css.paymentForm}
-                    onSubmit={this.handleSubmit}
-                    inProgress={this.state.submitting}
-                    formId="CheckoutPagePaymentForm"
-                    paymentInfo={intl.formatMessage({ id: 'CheckoutPage.paymentInfo' })}
-                    authorDisplayName={currentAuthor.attributes.profile.displayName}
-                    showInitialMessageInput={showInitialMessageInput}
-                    initialValues={initalValuesForStripePayment}
-                    initiateOrderError={initiateOrderError}
-                    confirmCardPaymentError={confirmCardPaymentError}
-                    confirmPaymentError={confirmPaymentError}
-                    hasHandledCardPayment={hasPaymentIntentUserActionsDone}
-                    loadingData={!stripeCustomerFetched}
-                    defaultPaymentMethod={
-                      hasDefaultPaymentMethod
-                        ? currentUser.stripeCustomer.defaultPaymentMethod
-                        : null
-                    }
-                    paymentIntent={paymentIntent}
-                    onStripeInitialized={this.onStripeInitialized}
-                    useDefaultTestData={this.state.useDefaultTestData}
-                  />
-                </>
+                <StripePaymentForm
+                  className={css.paymentForm}
+                  onSubmit={this.handleSubmit}
+                  inProgress={this.state.submitting}
+                  formId="CheckoutPagePaymentForm"
+                  paymentInfo={intl.formatMessage({ id: 'CheckoutPage.paymentInfo' })}
+                  authorDisplayName={currentAuthor.attributes.profile.displayName}
+                  showInitialMessageInput={showInitialMessageInput}
+                  initialValues={initalValuesForStripePayment}
+                  initiateOrderError={initiateOrderError}
+                  confirmCardPaymentError={confirmCardPaymentError}
+                  confirmPaymentError={confirmPaymentError}
+                  hasHandledCardPayment={hasPaymentIntentUserActionsDone}
+                  loadingData={!stripeCustomerFetched}
+                  defaultPaymentMethod={
+                    hasDefaultPaymentMethod ? currentUser.stripeCustomer.defaultPaymentMethod : null
+                  }
+                  paymentIntent={paymentIntent}
+                  onStripeInitialized={this.onStripeInitialized}
+                  useDefaultTestData={this.state.useDefaultTestData}
+                />
               ) : null}
               {isPaymentExpired ? (
                 <p className={css.orderError}>

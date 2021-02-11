@@ -423,8 +423,9 @@ class StripePaymentForm extends Component {
       this.state.paymentMethod,
       showPaymentMethodSelector
     );
-    const showOnetimePaymentFields =
-      !!useDefaultTestData || ['onetimeCardPayment', 'replaceCard'].includes(selectedPaymentMethod);
+    const showOnetimePaymentFields = ['onetimeCardPayment', 'replaceCard'].includes(
+      selectedPaymentMethod
+    );
     return hasStripeKey ? (
       <Form className={classes} onSubmit={handleSubmit}>
         {billingDetailsNeeded && !loadingData ? (

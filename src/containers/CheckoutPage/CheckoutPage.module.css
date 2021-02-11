@@ -141,7 +141,7 @@
 
   @media (--viewportMedium) {
     margin-top: 27px;
-    margin-bottom: 22px;
+    margin-bottom: 22px; /* Demo customization */
   }
 
   @media (--viewportLarge) {
@@ -329,11 +329,4 @@
   @media (--viewportLarge) {
     margin: 0 48px;
   }
-}
-
-.stripeTestDataButton {
-  @apply --marketplaceSmallFontStyles;
-  width: 100%;
-  min-height: 40px;
-  margin-bottom: 16px;
 }

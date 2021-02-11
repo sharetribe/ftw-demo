@@ -34,6 +34,7 @@ import EditListingWizardTab, {
   PHOTOS,
 } from './EditListingWizardTab';
 import css from './EditListingWizard.module.css';
+import cssForDemo from './EditListingWizardDemoChanges.module.css';
 
 // Show availability calendar only if environment variable availabilityEnabled is true
 const availabilityMaybe = config.enableAvailability ? [AVAILABILITY] : [];
@@ -373,14 +374,22 @@ class EditListingWizard extends Component {
       return <NamedRedirect name="EditListingPage" params={pathParams} />;
     }
 
+    // Demo customization begins
     const handleStripeTestData = () => {
       this.setState({ useDefaultTestData: true });
     };
 
     const stripeDefaultTestData = config.stripe.testData;
-    const stripeInitialValues = this.state.useDefaultTestData
+    const stripeInitialValuesForDemo = this.state.useDefaultTestData
       ? { accountType: stripeDefaultTestData.accountType, country: stripeDefaultTestData.country }
       : null;
+
+    const FillDemoDataButton = () => (
+      <Button className={cssForDemo.stripeTestDataButton} onClick={handleStripeTestData}>
+        <FormattedMessage id="EditListingWizard.fillInTestDetails" />
+      </Button>
+    );
+    // Demo customization ends
 
     return (
       <div className={classes}>
@@ -436,9 +445,7 @@ class EditListingWizard extends Component {
                 <p className={css.modalMessage}>
                   <FormattedMessage id="EditListingWizard.payoutModalInfo" />
                 </p>
-                <Button className={css.stripeTestDataButton} onClick={handleStripeTestData}>
-                  <FormattedMessage id="EditListingWizard.fillInTestDetails" />
-                </Button>
+                <FillDemoDataButton />
                 <StripeConnectAccountForm
                   disabled={formDisabled}
                   inProgress={payoutDetailsSaveInProgress}
@@ -456,7 +463,7 @@ class EditListingWizard extends Component {
                   onSubmit={rest.onPayoutDetailsSubmit}
                   onGetStripeConnectAccountLink={handleGetStripeConnectAccountLink}
                   stripeConnected={stripeConnected}
-                  initialValues={stripeInitialValues}
+                  initialValues={stripeInitialValuesForDemo}
                   useDefaultTestData={this.state.useDefaultTestData}
                 >
                   {stripeConnected && !returnedAbnormallyFromStripe && showVerificationNeeded ? (

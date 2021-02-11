@@ -98,21 +98,7 @@ exports[`CheckoutPage matches snapshot 1`] = `
       <section
         className="paymentContainer"
       >
-        <Button
-          checkmarkClassName={null}
-          className="stripeTestDataButton"
-          disabled={false}
-          inProgress={false}
-          onClick={[Function]}
-          ready={false}
-          rootClassName={null}
-          spinnerClassName={null}
-        >
-          <FormattedMessage
-            id="CheckoutPage.fillInTestDetails"
-            values={Object {}}
-          />
-        </Button>
+        <FillDemoDataButton />
         <injectIntl(StripePaymentForm)
           authorDisplayName="author display name"
           className="paymentForm"

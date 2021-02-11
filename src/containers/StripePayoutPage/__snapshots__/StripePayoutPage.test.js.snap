@@ -43,21 +43,7 @@ exports[`StripePayoutPage matches snapshot with Stripe connected 1`] = `
             values={Object {}}
           />
         </h1>
-        <Button
-          checkmarkClassName={null}
-          className="stripeTestDataButton"
-          disabled={false}
-          inProgress={false}
-          onClick={[Function]}
-          ready={false}
-          rootClassName={null}
-          spinnerClassName={null}
-        >
-          <FormattedMessage
-            id="StripePayoutPage.fillInTestDetails"
-            values={Object {}}
-          />
-        </Button>
+        <FillDemoDataButton />
         <injectIntl(StripeConnectAccountFormComponent)
           currentUser={
             Object {
@@ -162,21 +148,7 @@ exports[`StripePayoutPage matches snapshot with Stripe not connected 1`] = `
             values={Object {}}
           />
         </h1>
-        <Button
-          checkmarkClassName={null}
-          className="stripeTestDataButton"
-          disabled={false}
-          inProgress={false}
-          onClick={[Function]}
-          ready={false}
-          rootClassName={null}
-          spinnerClassName={null}
-        >
-          <FormattedMessage
-            id="StripePayoutPage.fillInTestDetails"
-            values={Object {}}
-          />
-        </Button>
+        <FillDemoDataButton />
         <injectIntl(StripeConnectAccountFormComponent)
           currentUser={
             Object {
@@ -271,21 +243,7 @@ exports[`StripePayoutPage matches snapshot with details submitted 1`] = `
             values={Object {}}
           />
         </h1>
-        <Button
-          checkmarkClassName={null}
-          className="stripeTestDataButton"
-          disabled={false}
-          inProgress={false}
-          onClick={[Function]}
-          ready={false}
-          rootClassName={null}
-          spinnerClassName={null}
-        >
-          <FormattedMessage
-            id="StripePayoutPage.fillInTestDetails"
-            values={Object {}}
-          />
-        </Button>
+        <FillDemoDataButton />
         <injectIntl(StripeConnectAccountFormComponent)
           currentUser={
             Object {

@@ -358,7 +358,7 @@ export const testData = {
   },
   address: {
     addressLine1: 'Main Street 123',
-    postal: '00130',
+    postal: '00100',
     city: 'Helsinki',
     country: 'FI',
   },
