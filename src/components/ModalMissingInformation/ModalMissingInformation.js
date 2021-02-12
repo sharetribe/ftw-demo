@@ -19,6 +19,20 @@ const MISSING_INFORMATION_MODAL_WHITELIST = [
   'EmailVerificationPage',
   'PasswordResetPage',
   'StripePayoutPage',
+
+  // Whitelisted only in demo:
+  'PaymentMethodsPage',
+  'AboutPage',
+  'SearchPage',
+  'SearchFiltersPage',
+  'SearchListingsPage',
+  'SearchMapPage',
+  'ProfileSettingsPage',
+  'ManageListingsPage',
+  'AccountSettingsPage',
+  'ContactDetailsPage',
+  'PasswordResetPage',
+  'LandingPage',
 ];
 
 const EMAIL_VERIFICATION = 'EMAIL_VERIFICATION';
