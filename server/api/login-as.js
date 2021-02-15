@@ -33,6 +33,13 @@ const urlifyBase64 = base64Str =>
     .replace(/\//g, '_')
     .replace(/=/g, '');
 
+const hostnameToClientId = hostname => {
+  // Match the first sub domain for an UUID in form:
+  // 00000000-0000-0000-0000-000000000000.another-sub-domain.example.com
+  const match = /^(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\./.exec(hostname);
+  return match ? match[1] : null;
+};
+
 // Works as the redirect_uri passed in an authorization code request. Receives
 // an authorization code and uses that to log in and redirect to the landing
 // page.
