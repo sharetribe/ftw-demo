@@ -171,10 +171,27 @@ export const createStripeAccount = params => (dispatch, getState, sdk) => {
   // In Flex both 'card_payments' and 'transfers' are required.
   const requestedCapabilities = ['card_payments', 'transfers'];
 
-  const accountInfo = {
+  // Demo customization starts
+  let accountInfo = {
     business_type: accountType,
     tos_shown_and_accepted: true,
   };
+
+  const { useDefaultTestData, currentUser } = params;
+
+  if (useDefaultTestData) {
+    accountInfo = {
+      ...accountInfo,
+      individual: {
+        first_name: currentUser.attributes.profile.firstName,
+        last_name: currentUser.attributes.profile.lastName,
+        email: currentUser.attributes.email,
+        address: config.stripe.testData.providerAddress,
+      },
+    };
+  }
+
+  // Demo customization ends
 
   dispatch(stripeAccountCreateRequest());
 
