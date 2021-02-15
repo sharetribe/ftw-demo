@@ -224,10 +224,17 @@ const StripeConnectAccountFormComponent = props => {
   const { onSubmit, ...restOfProps } = props;
   const isUpdate = props.stripeConnected;
 
+  // For demo customization, we need to add useDefaultTestData
+  // and currentUser to values we pass to onPayoutDetailsSubmit
+  // function to prefill some fields in Stripe Connect Onboarding
+  const { currentUser, useDefaultTestData } = props;
+  const handleOnSubmitInDemo = values =>
+    onSubmit({ ...values, currentUser, useDefaultTestData }, isUpdate);
+
   return (
     <FinalForm
       {...restOfProps}
-      onSubmit={values => onSubmit(values, isUpdate)}
+      onSubmit={values => handleOnSubmitInDemo(values)}
       mutators={{
         ...arrayMutators,
       }}
@@ -251,8 +258,6 @@ const StripeConnectAccountFormComponent = props => {
           form,
           values,
           stripeConnected,
-          currentUser,
-          useDefaultTestData,
         } = fieldRenderProps;
 
         const accountDataLoaded = stripeConnected && stripeAccountFetched && savedCountry;

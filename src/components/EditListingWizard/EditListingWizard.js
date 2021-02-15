@@ -248,8 +248,16 @@ class EditListingWizard extends Component {
   }
 
   handlePayoutSubmit(values) {
+    // For demo customization, we need to add useDefaultTestData
+    // and currentUser to values we pass to onPayoutDetailsSubmit
+    // function to prefill some fields in Stripe Connect Onboarding
+    const useDefaultTestData = this.state.useDefaultTestData;
+    const currentUser = this.props.currentUser;
+
     this.props
-      .onPayoutDetailsSubmit(values)
+      .onPayoutDetailsSubmit(
+        this.state.useDefaultTestData ? { values, useDefaultTestData, currentUser } : values
+      )
       .then(response => {
         this.props.onManageDisableScrolling('EditListingWizard.payoutModal', false);
       })

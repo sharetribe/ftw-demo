@@ -366,6 +366,11 @@ export const testData = {
   country: 'FI',
   bankAccountNumber: 'FI89370400440532013000',
   bankAccountType: 'iban',
+  providerAddress: {
+    line1: 'Marketplace Street 123',
+    postal_code: '00100',
+    city: 'Helsinki',
+  },
 };
 
 /*
