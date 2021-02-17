@@ -958,6 +958,8 @@
   "StripeConnectAccountForm.individualAccount": "I'm an individual",
   "StripeConnectAccountForm.createStripeAccountLinkFailed": "Whoops, something went wrong. Please contact your marketplace administrators.",
   "StripeConnectAccountForm.createStripeAccountLinkFailedWithStripeError": "Whoops, something went wrong. Stripe returned an error message: \"{stripeMessage}\"",
+  "StripeConnectAccountForm.demoInfoTextLink": "Stripe test details",
+  "StripeConnectAccountForm.demoInfoText": "We will fill the payout preferences and {stripeTestDataLink} for you.",
   "StripeConnectAccountForm.loadingStripeAccountData": "Fetching payout details…",
   "StripeConnectAccountForm.stripeToSText": "By saving details, you agree to the {stripeConnectedAccountTermsLink}",
   "StripeConnectAccountForm.stripeConnectedAccountTermsLink": "Stripe Connected Account Agreement",
