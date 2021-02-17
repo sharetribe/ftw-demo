@@ -7,6 +7,8 @@ This file contains changes that are made solely to the demo FTW.
 
 ## 2021-02-16
 
+- [add] Move Stripe test data button to StripeConnectAccountForm and add info texts to Stripe test
+  data buttons [#24](https://github.com/sharetribe/ftw-demo/pull/24)
 - [add] Prefill some data to Stripe Connect Onboarding
   [#23](https://github.com/sharetribe/ftw-demo/pull/23)
 - [add] Whitelist more pages for email verification modal
