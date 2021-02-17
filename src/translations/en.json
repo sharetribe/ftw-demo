@@ -93,6 +93,8 @@
   "BookingPanel.subTitleClosedListing": "Sorry, this listing has been closed.",
   "CheckoutPage.bookingTimeNotAvailableMessage": "Unfortunately, the requested time is already booked.",
   "CheckoutPage.chargeDisabledMessage": "This provider's payout information is incomplete so this listing cannot be booked. Please contact the marketplace administrators.",
+  "CheckoutPage.demoInfoTextLink": "test card",
+  "CheckoutPage.demoInfoText": "We will fill the {stripeTestDataLink} and billing details for you.",
   "CheckoutPage.errorlistingLinkText": "the sauna page",
   "CheckoutPage.fillInTestDetails": "Fill in test details",
   "CheckoutPage.goToLandingPage": "Go to homepage",
