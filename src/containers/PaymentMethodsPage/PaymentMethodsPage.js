@@ -11,6 +11,7 @@ import { handleCardSetup } from '../../ducks/stripe.duck';
 import { manageDisableScrolling, isScrollingDisabled } from '../../ducks/UI.duck';
 import {
   Button,
+  ExternalLink,
   SavedCardDetails,
   LayoutSideNavigation,
   LayoutWrapperMain,
@@ -159,11 +160,23 @@ const PaymentMethodsPageComponent = props => {
     setUseDefaultTestData(true);
   };
 
+  const stripeTestDataLink = (
+    <ExternalLink href="https://stripe.com/docs/testing#cards">
+      <FormattedMessage id="PaymentMethodsPage.demoInfoTextLink" />
+    </ExternalLink>
+  );
+  const testButtonInfoText = (
+    <FormattedMessage id="PaymentMethodsPage.demoInfoText" values={{ stripeTestDataLink }} />
+  );
+
   const FillDemoDataButton = () =>
     showForm ? (
-      <Button className={cssForDemo.stripeTestDataButton} onClick={handleInitialTestData}>
-        <FormattedMessage id="PaymentMethodsPage.fillInTestDetails" />
-      </Button>
+      <>
+        <Button className={cssForDemo.stripeTestDataButton} onClick={handleInitialTestData}>
+          <FormattedMessage id="PaymentMethodsPage.fillInTestDetails" />
+        </Button>
+        <p className={cssForDemo.stripeTestDataButtonInfo}>{testButtonInfoText}</p>
+      </>
     ) : null;
 
   // Demo customization ends

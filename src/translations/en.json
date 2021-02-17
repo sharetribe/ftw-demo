@@ -515,6 +515,8 @@
   "PaymentMethodsForm.paymentHeading": "Payment",
   "PaymentMethodsPage.fillInTestDetails": "Fill in test details",
   "PaymentMethodsPage.heading": "Payment methods",
+  "PaymentMethodsPage.demoInfoTextLink": "test card",
+  "PaymentMethodsPage.demoInfoText": "We will fill the {stripeTestDataLink} and billing details for you.",
   "PaymentMethodsPage.loadingData": "Loading data…",
   "PaymentMethodsPage.savedPaymentMethodTitle": "Credit card details",
   "PaymentMethodsForm.submitPaymentInfo": "Save payment card",
