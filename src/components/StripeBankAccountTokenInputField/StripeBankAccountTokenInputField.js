@@ -9,7 +9,6 @@ import config from '../../config';
 
 import {
   BANK_ACCOUNT_INPUTS,
-  cleanedString,
   formatFieldMessage,
   requiredInputs,
   mapInputsToStripeAccountKeys,
@@ -17,7 +16,7 @@ import {
   translateStripeError,
 } from './StripeBankAccountTokenInputField.util';
 import StripeBankAccountRequiredInput from './StripeBankAccountRequiredInput';
-import css from './StripeBankAccountTokenInputField.css';
+import css from './StripeBankAccountTokenInputField.module.css';
 
 // Since final-form tracks the onBlur event for marking the field as
 // touched (which triggers possible error validation rendering), only
@@ -41,9 +40,11 @@ class TokenInputFieldComponent extends Component {
     };
 
     // Fill initialState with input type specific data
+    // Demo specific: If the user wants to use default test values,
+    // we need to add the default bankAccountNumber as inital value
     BANK_ACCOUNT_INPUTS.forEach(inputType => {
       this.initialState[inputType] = {
-        value: '',
+        value: this.props.useDefaultTestData ? config.stripe.testData.bankAccountNumber : null,
         touched: false,
         error: formatFieldMessage(intl, inputType, 'required'),
       };
@@ -77,6 +78,19 @@ class TokenInputFieldComponent extends Component {
     }
     this.stripe = window.Stripe(config.stripe.publishableKey);
     this._isMounted = true;
+
+    // Demo specific: If the user wants to use default test values,
+    // we need to trigger fetching the bank account token from Stripe
+    // separately (as the value is initial value and the field has not changed yet actually).
+    // This is a bit hacky, but it keeps the diff in minimum.
+    if (!!this.props.useDefaultTestData) {
+      this.handleInputChange(
+        { target: { value: config.stripe.testData.bankAccountNumber } },
+        config.stripe.testData.bankAccountType,
+        config.stripe.testData.country,
+        this.props.intl
+      );
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -150,19 +164,16 @@ class TokenInputFieldComponent extends Component {
         return result.token.id;
       })
       .then(token => {
+        // Check if value has changed during async call.
         const changedValues = inputsNeeded.filter(
-          inputType => values[inputType] !== cleanedString(this.state[inputType].value)
+          inputType => values[inputType] !== this.state[inputType].value
         );
         const valuesAreUnchanged = changedValues.length === 0;
 
         // Handle response only if the input values haven't changed
         if (this._isMounted && valuesAreUnchanged) {
           this.setState(prevState => {
-            const errorsClearedFromInputs = inputsNeeded.map(inputType => {
-              const input = prevState[inputType];
-              return { ...input, error: null };
-            });
-            return { ...errorsClearedFromInputs, stripeError: null };
+            return { stripeError: null };
           });
 
           onChange(token);
@@ -181,8 +192,8 @@ class TokenInputFieldComponent extends Component {
   }
 
   handleInputChange(e, inputType, country, intl) {
-    const rawValue = e.target.value;
-    const value = cleanedString(rawValue);
+    const value = e.target.value;
+
     let inputError = null;
 
     // Validate the changed routing number
@@ -194,7 +205,7 @@ class TokenInputFieldComponent extends Component {
 
     // Save changes to the state
     this.setState(prevState => {
-      const input = { ...prevState[inputType], value: rawValue, error: inputError };
+      const input = { ...prevState[inputType], value, error: inputError };
       return {
         [inputType]: input,
         stripeError: null,

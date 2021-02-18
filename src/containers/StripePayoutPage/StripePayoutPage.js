@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { bool, func, oneOf, shape } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -14,6 +14,7 @@ import {
   getStripeConnectAccountLink,
 } from '../../ducks/stripeConnectAccount.duck';
 import {
+  Button,
   NamedRedirect,
   LayoutSideNavigation,
   LayoutWrapperMain,
@@ -29,7 +30,7 @@ import { StripeConnectAccountForm } from '../../forms';
 import { TopbarContainer } from '..';
 import { savePayoutDetails, loadData } from './StripePayoutPage.duck';
 
-import css from './StripePayoutPage.css';
+import css from './StripePayoutPage.module.css';
 
 const STRIPE_ONBOARDING_RETURN_URL_SUCCESS = 'success';
 const STRIPE_ONBOARDING_RETURN_URL_FAILURE = 'failure';
@@ -80,6 +81,7 @@ export const StripePayoutPageComponent = props => {
     currentUser,
     scrollingDisabled,
     getAccountLinkInProgress,
+    getAccountLinkError,
     createStripeAccountError,
     updateStripeAccountError,
     fetchStripeAccountError,
@@ -93,6 +95,19 @@ export const StripePayoutPageComponent = props => {
     params,
     intl,
   } = props;
+
+  // Demo customization begins
+  const [useDefaultTestData, setUseDefaultTestData] = useState(false);
+  const handleStripeTestData = () => {
+    setUseDefaultTestData(true);
+  };
+
+  // Demo customization ends
+
+  const stripeDefaultTestData = config.stripe.testData;
+  const stripeInitialValues = useDefaultTestData
+    ? { accountType: stripeDefaultTestData.accountType, country: stripeDefaultTestData.country }
+    : null;
 
   const { returnURLType } = params;
   const ensuredCurrentUser = ensureCurrentUser(currentUser);
@@ -127,12 +142,18 @@ export const StripePayoutPageComponent = props => {
   );
 
   const returnedNormallyFromStripe = returnURLType === STRIPE_ONBOARDING_RETURN_URL_SUCCESS;
-  const showVerificationError = returnURLType === STRIPE_ONBOARDING_RETURN_URL_FAILURE;
+  const returnedAbnormallyFromStripe = returnURLType === STRIPE_ONBOARDING_RETURN_URL_FAILURE;
   const showVerificationNeeded = stripeConnected && requirementsMissing;
 
   // Redirect from success URL to basic path for StripePayoutPage
   if (returnedNormallyFromStripe && stripeConnected && !requirementsMissing) {
     return <NamedRedirect name="StripePayoutPage" />;
+  }
+
+  // Failure url should redirect back to Stripe since it's most likely due to page reload
+  // Account link creation will fail if the account is the reason
+  if (returnedAbnormallyFromStripe && !getAccountLinkError) {
+    handleGetStripeConnectAccountLink('custom_account_verification')();
   }
 
   return (
@@ -154,11 +175,14 @@ export const StripePayoutPageComponent = props => {
             </h1>
             {!currentUserLoaded ? (
               <FormattedMessage id="StripePayoutPage.loadingData" />
+            ) : returnedAbnormallyFromStripe && !getAccountLinkError ? (
+              <FormattedMessage id="StripePayoutPage.redirectingToStripe" />
             ) : (
               <StripeConnectAccountForm
                 disabled={formDisabled}
                 inProgress={payoutDetailsSaveInProgress}
                 ready={payoutDetailsSaved}
+                currentUser={ensuredCurrentUser}
                 stripeBankAccountLastDigits={getBankAccountLast4Digits(stripeAccountData)}
                 savedCountry={savedCountry}
                 submitButtonText={intl.formatMessage({
@@ -167,21 +191,25 @@ export const StripePayoutPageComponent = props => {
                 stripeAccountError={
                   createStripeAccountError || updateStripeAccountError || fetchStripeAccountError
                 }
+                stripeAccountLinkError={getAccountLinkError}
                 stripeAccountFetched={stripeAccountFetched}
                 onChange={onPayoutDetailsFormChange}
                 onSubmit={onPayoutDetailsFormSubmit}
                 onGetStripeConnectAccountLink={handleGetStripeConnectAccountLink}
                 stripeConnected={stripeConnected}
+                initialValues={stripeInitialValues}
+                useDefaultTestData={useDefaultTestData}
+                handleStripeTestData={handleStripeTestData}
               >
-                {stripeConnected && (showVerificationError || showVerificationNeeded) ? (
+                {stripeConnected && !returnedAbnormallyFromStripe && showVerificationNeeded ? (
                   <StripeConnectAccountStatusBox
-                    type={showVerificationError ? 'verificationError' : 'verificationNeeded'}
+                    type="verificationNeeded"
                     inProgress={getAccountLinkInProgress}
                     onGetStripeConnectAccountLink={handleGetStripeConnectAccountLink(
                       'custom_account_verification'
                     )}
                   />
-                ) : stripeConnected && savedCountry ? (
+                ) : stripeConnected && savedCountry && !returnedAbnormallyFromStripe ? (
                   <StripeConnectAccountStatusBox
                     type="verificationSuccess"
                     inProgress={getAccountLinkInProgress}
@@ -208,6 +236,7 @@ StripePayoutPageComponent.defaultProps = {
   createStripeAccountError: null,
   updateStripeAccountError: null,
   fetchStripeAccountError: null,
+  getAccountLinkError: null,
   stripeAccount: null,
   params: {
     returnURLType: null,
@@ -220,9 +249,11 @@ StripePayoutPageComponent.propTypes = {
   getAccountLinkInProgress: bool.isRequired,
   payoutDetailsSaveInProgress: bool.isRequired,
   createStripeAccountError: propTypes.error,
+  getAccountLinkError: propTypes.error,
   updateStripeAccountError: propTypes.error,
   fetchStripeAccountError: propTypes.error,
   stripeAccount: propTypes.stripeAccount,
+  stripeAccountFetched: bool.isRequired,
   payoutDetailsSaved: bool.isRequired,
 
   onPayoutDetailsFormChange: func.isRequired,
@@ -239,6 +270,7 @@ StripePayoutPageComponent.propTypes = {
 const mapStateToProps = state => {
   const {
     getAccountLinkInProgress,
+    getAccountLinkError,
     createStripeAccountError,
     updateStripeAccountError,
     fetchStripeAccountError,
@@ -250,6 +282,7 @@ const mapStateToProps = state => {
   return {
     currentUser,
     getAccountLinkInProgress,
+    getAccountLinkError,
     createStripeAccountError,
     updateStripeAccountError,
     fetchStripeAccountError,

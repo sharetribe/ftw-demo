@@ -1,3 +1,6 @@
+import { types as sdkTypes } from './util/sdkLoader';
+const { UUID } = sdkTypes;
+
 /* Stripe related configuration.
 
 NOTE: REACT_APP_STRIPE_PUBLISHABLE_KEY is mandatory environment variable.
@@ -7,11 +10,21 @@ To make Stripe connection work, you also need to set Stripe's private key in the
 
 export const stripePublishableKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
 
+/**
+ * Default merchant category code (MCC)
+ * MCCs are used to classify businesses by the type of goods or services they provide.
+ *
+ * In FTW we use code 5734 Computer Software Stores as a default for all the connected accounts.
+ *
+ * See the whole list of MCC codes from https://stripe.com/docs/connect/setting-mcc#list
+ */
+export const defaultMCC = '5734';
+
 /*
 Stripe only supports payments in certain countries, see full list
 at https://stripe.com/global
 
-You can find the bank account formats from https://stripe.com/docs/connect/payouts#formats
+You can find the bank account formats from https://stripe.com/docs/connect/payouts-bank-accounts
 */
 
 export const stripeCountryDetails = [
@@ -41,6 +54,14 @@ export const stripeCountryDetails = [
     },
   },
   {
+    //Bulgraia
+    code: 'BG',
+    currency: 'BGN',
+    accountConfig: {
+      iban: true,
+    },
+  },
+  {
     // Canada
     code: 'CA',
     currency: 'CAD',
@@ -48,6 +69,22 @@ export const stripeCountryDetails = [
       transitNumber: true,
       institutionNumber: true,
       accountNumber: true,
+    },
+  },
+  {
+    //Cyprus
+    code: 'CY',
+    currency: 'EUR',
+    accountConfig: {
+      iban: true,
+    },
+  },
+  {
+    //	Czech Republic
+    code: 'CZ',
+    currency: 'CZK',
+    accountConfig: {
+      iban: true,
     },
   },
   {
@@ -162,6 +199,14 @@ export const stripeCountryDetails = [
     },
   },
   {
+    // Malta
+    code: 'MT',
+    currency: 'EUR',
+    accountConfig: {
+      iban: true,
+    },
+  },
+  {
     // Mexico
     code: 'MX',
     currency: 'MXN',
@@ -205,6 +250,14 @@ export const stripeCountryDetails = [
     // Portugal
     code: 'PT',
     currency: 'EUR',
+    accountConfig: {
+      iban: true,
+    },
+  },
+  {
+    // Romania
+    code: 'RO',
+    currency: 'RON',
     accountConfig: {
       iban: true,
     },
@@ -279,15 +332,56 @@ export const stripeCountryDetails = [
   },
 ];
 
+/**
+ * Stripe test data
+ *
+ * This data is for filling up the test values related to Stripe
+ * in the demo application to make testing easier.
+ */
+
+export const testData = {
+  basicTestPaymentMethodToken: 'pm_card_visa',
+  basicTestCardToken: 'tok_visa',
+  basicTestCardDetails: {
+    id: new UUID('test-card'),
+    type: 'stripePaymentMethod',
+    attributes: {
+      type: 'stripe-payment-method/card',
+      stripePaymentMethodId: 'test-card',
+      card: {
+        brand: 'visa',
+        last4Digits: '4242',
+        expirationMonth: 4,
+        expirationYear: 2424,
+      },
+    },
+  },
+  address: {
+    addressLine1: 'Main Street 123',
+    postal: '00100',
+    city: 'Helsinki',
+    country: 'FI',
+  },
+  accountType: 'individual',
+  country: 'FI',
+  bankAccountNumber: 'FI89370400440532013000',
+  bankAccountType: 'iban',
+  providerAddress: {
+    line1: 'Marketplace Street 123',
+    postal_code: '00100',
+    city: 'Helsinki',
+  },
+};
+
 /*
 NOTE: This configuration will not be updated!
-We might remove this code in the later releases. 
+We might remove this code in the later releases.
 
 With Connect Onboarding Stripe will handle collecting most of the information about user. For new setup we only need the list of countries and accountConfig.
 If you want to handle the whole onboarding flow on your on application, you can use the old PayoutDetailsForm as a starting point. That form uses this configuration option.
 You should make sure that the list of countries is up-to-date and that the config contains all the required infomation you need to collect.
 
-Remember to change the import from config.js if you want to use this config! 
+Remember to change the import from config.js if you want to use this config!
 
 This setup is for API version '2019-02-19' and later.
 If you have an older API version in use, you need to update your Stripe API.

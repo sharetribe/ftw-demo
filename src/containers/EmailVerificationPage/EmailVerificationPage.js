@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { bool, func, shape, string } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -22,7 +22,7 @@ import {
 import { EmailVerificationForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
 
-import css from './EmailVerificationPage.css';
+import css from './EmailVerificationPage.module.css';
 
 /**
   Parse verification token from URL
@@ -52,6 +52,7 @@ export const EmailVerificationPageComponent = props => {
     intl,
     scrollingDisabled,
     submitVerification,
+    isVerified,
     emailVerificationInProgress,
     verificationError,
     location,
@@ -63,9 +64,12 @@ export const EmailVerificationPageComponent = props => {
   const initialValues = {
     verificationToken: parseVerificationToken(location ? location.search : null),
   };
-
   const user = ensureCurrentUser(currentUser);
-  if (user && user.attributes.emailVerified) {
+
+  // The first attempt to verify email is done when the page is loaded
+  // If the verify API call is successfull and the user has verified email
+  // We can redirect user forward from email verification page.
+  if (isVerified && user && user.attributes.emailVerified) {
     return <NamedRedirect name="LandingPage" />;
   }
 
@@ -106,12 +110,11 @@ EmailVerificationPageComponent.defaultProps = {
   verificationError: null,
 };
 
-const { bool, func, shape, string } = PropTypes;
-
 EmailVerificationPageComponent.propTypes = {
   currentUser: propTypes.currentUser,
   scrollingDisabled: bool.isRequired,
   submitVerification: func.isRequired,
+  isVerified: bool,
   emailVerificationInProgress: bool.isRequired,
   verificationError: propTypes.error,
 
@@ -126,8 +129,9 @@ EmailVerificationPageComponent.propTypes = {
 
 const mapStateToProps = state => {
   const { currentUser } = state.user;
-  const { verificationError, verificationInProgress } = state.EmailVerification;
+  const { isVerified, verificationError, verificationInProgress } = state.EmailVerification;
   return {
+    isVerified,
     verificationError,
     emailVerificationInProgress: verificationInProgress,
     currentUser,

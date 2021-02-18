@@ -38,10 +38,10 @@ export const BANK_ACCOUNT_INPUTS = [
   TRANSIT_NUMBER,
   INSTITUTION_NUMBER,
   CLEARING_CODE,
-  BRANCH_NAME,
-  BRANCH_CODE,
   BANK_NAME,
   BANK_CODE,
+  BRANCH_NAME,
+  BRANCH_CODE,
   SORT_CODE,
   ROUTING_NUMBER,
   ACCOUNT_OWNER_NAME,
@@ -165,6 +165,9 @@ export const mapInputsToStripeAccountKeys = (country, values) => {
   switch (country) {
     case 'AT':
     case 'BE':
+    case 'BG':
+    case 'CY':
+    case 'CZ':
     case 'DK':
     case 'EE':
     case 'FI':
@@ -176,9 +179,11 @@ export const mapInputsToStripeAccountKeys = (country, values) => {
     case 'LV':
     case 'LT':
     case 'LU':
+    case 'MT':
     case 'NL':
     case 'PL':
     case 'PT':
+    case 'RO':
     case 'SK':
     case 'SI':
     case 'ES':
@@ -231,11 +236,11 @@ export const mapInputsToStripeAccountKeys = (country, values) => {
 
     case 'JP':
       return {
-        bank_name: cleanedString(values[BANK_NAME]),
-        branch_name: cleanedString(values[BRANCH_NAME]),
+        bank_name: values[BANK_NAME],
+        branch_name: values[BRANCH_NAME],
         routing_number: cleanedString(values[BANK_CODE]).concat(values[BRANCH_CODE]),
         account_number: cleanedString(values[ACCOUNT_NUMBER]),
-        account_holder_name: cleanedString(values[ACCOUNT_OWNER_NAME]),
+        account_holder_name: values[ACCOUNT_OWNER_NAME],
       };
 
     case 'MX':

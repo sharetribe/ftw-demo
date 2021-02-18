@@ -1,0 +1,16 @@
+@import '../../styles/propertySets.css';
+
+.stripeTestDataButton {
+  @apply --marketplaceSmallFontStyles;
+  width: 100%;
+  min-height: 40px;
+}
+
+.stripeTestDataButtonInfo {
+  color: var(--matterColorAnti);
+  margin-top: 11px;
+
+  @media (--viewportMedium) {
+    margin-top: 16px;
+  }
+}

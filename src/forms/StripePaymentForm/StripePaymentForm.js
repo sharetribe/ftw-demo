@@ -21,7 +21,7 @@ import {
   SavedCardDetails,
   StripePaymentAddress,
 } from '../../components';
-import css from './StripePaymentForm.css';
+import css from './StripePaymentForm.module.css';
 
 /**
  * Translate a Stripe API error object.
@@ -63,17 +63,17 @@ const stripeErrorTranslation = (intl, stripeError) => {
 const stripeElementsOptions = {
   fonts: [
     {
-      family: 'sofiapro',
+      family: 'poppins',
       fontSmoothing: 'antialiased',
       src:
-        'local("sofiapro"), local("SofiaPro"), local("Sofia Pro"), url("https://assets-sharetribecom.sharetribe.com/webfonts/sofiapro/sofiapro-medium-webfont.woff2") format("woff2")',
+        'local("poppins"), local("Poppins"), url("https://assets-sharetribecom.sharetribe.com/webfonts/poppins/Poppins-Medium.ttf") format("truetype")',
     },
   ],
 };
 
 const cardStyles = {
   base: {
-    fontFamily: '"sofiapro", Helvetica, Arial, sans-serif',
+    fontFamily: '"poppins", Helvetica, Arial, sans-serif',
     fontSize: '18px',
     fontSmoothing: 'antialiased',
     lineHeight: '24px',
@@ -86,7 +86,16 @@ const cardStyles = {
 };
 
 const OneTimePaymentWithCardElement = props => {
-  const { cardClasses, formId, handleStripeElementRef, hasCardError, error, label, intl } = props;
+  const {
+    cardClasses,
+    formId,
+    handleStripeElementRef,
+    hasCardError,
+    error,
+    label,
+    intl,
+    useDefaultTestData,
+  } = props;
   const labelText =
     label || intl.formatMessage({ id: 'StripePaymentForm.saveAfterOnetimePayment' });
   return (
@@ -94,8 +103,19 @@ const OneTimePaymentWithCardElement = props => {
       <label className={css.paymentLabel} htmlFor={`${formId}-card`}>
         <FormattedMessage id="StripePaymentForm.paymentCardDetails" />
       </label>
-      <div className={cardClasses} id={`${formId}-card`} ref={handleStripeElementRef} />
-      {hasCardError ? <span className={css.error}>{error}</span> : null}
+      {useDefaultTestData ? (
+        <FormattedMessage
+          id="StripePaymentForm.useDefaultTestCard"
+          values={{
+            last4: config.stripe.testData.basicTestCardDetails.attributes.card.last4Digits,
+          }}
+        />
+      ) : (
+        <>
+          <div className={cardClasses} id={`${formId}-card`} ref={handleStripeElementRef} />
+          {hasCardError ? <span className={css.error}>{error}</span> : null}
+        </>
+      )}
       <div className={css.saveForLaterUse}>
         <FieldCheckbox
           className={css.saveForLaterUseCheckbox}
@@ -125,6 +145,7 @@ const PaymentMethodSelector = props => {
     error,
     paymentMethod,
     intl,
+    useDefaultTestData,
   } = props;
   const last4Digits = defaultPaymentMethod.attributes.card.last4Digits;
   const labelText = intl.formatMessage(
@@ -151,6 +172,7 @@ const PaymentMethodSelector = props => {
           error={error}
           label={labelText}
           intl={intl}
+          useDefaultTestData={useDefaultTestData}
         />
       ) : null}
     </React.Fragment>
@@ -177,7 +199,7 @@ const initialState = {
  * Payment form that asks for credit card info using Stripe Elements.
  *
  * When the card is valid and the user submits the form, a request is
- * sent to the Stripe API to handle payment. `stripe.handleCardPayment`
+ * sent to the Stripe API to handle payment. `stripe.confirmCardPayment`
  * may ask more details from cardholder if 3D security steps are needed.
  *
  * See: https://stripe.com/docs/payments/payment-intents
@@ -289,16 +311,24 @@ class StripePaymentForm extends Component {
     const { initialMessage } = values;
     const { cardValueValid, paymentMethod } = this.state;
     const billingDetailsKnown = hasHandledCardPayment || defaultPaymentMethod;
-    const onetimePaymentNeedsAttention = !billingDetailsKnown && !cardValueValid;
+    const onetimePaymentNeedsAttention =
+      !billingDetailsKnown && !cardValueValid && !this.props.useDefaultTestData;
 
     if (inProgress || onetimePaymentNeedsAttention) {
       // Already submitting or card value incomplete/invalid
       return;
     }
 
+    // Demo specific: If the user wants to use default test values,
+    // we should pass the default test token from Stripe instead of using
+    // card from Stripe Element (it's not possible to pass default value to that).
     const params = {
       message: initialMessage ? initialMessage.trim() : null,
-      card: this.card,
+      card: this.props.useDefaultTestData
+        ? {
+            token: config.stripe.testData.basicTestCardToken,
+          }
+        : card,
       formId,
       formValues: values,
       paymentMethod: getPaymentMethod(
@@ -321,13 +351,14 @@ class StripePaymentForm extends Component {
       showInitialMessageInput,
       intl,
       initiateOrderError,
-      handleCardPaymentError,
+      confirmCardPaymentError,
       confirmPaymentError,
       invalid,
       handleSubmit,
       form,
       hasHandledCardPayment,
       defaultPaymentMethod,
+      useDefaultTestData,
     } = formRenderProps;
 
     this.finalFormAPI = form;
@@ -338,22 +369,22 @@ class StripePaymentForm extends Component {
     const onetimePaymentNeedsAttention = !billingDetailsKnown && !this.state.cardValueValid;
     const submitDisabled = invalid || onetimePaymentNeedsAttention || submitInProgress;
     const hasCardError = this.state.error && !submitInProgress;
-    const hasPaymentErrors = handleCardPaymentError || confirmPaymentError;
+    const hasPaymentErrors = confirmCardPaymentError || confirmPaymentError;
     const classes = classNames(rootClassName || css.root, className);
     const cardClasses = classNames(css.card, {
       [css.cardSuccess]: this.state.cardValueValid,
       [css.cardError]: hasCardError,
     });
 
-    // TODO: handleCardPayment can create all kinds of errors.
+    // TODO: confirmCardPayment can create all kinds of errors.
     // Currently, we provide translation support for one:
     // https://stripe.com/docs/error-codes
     const piAuthenticationFailure = 'payment_intent_authentication_failure';
     const paymentErrorMessage =
-      handleCardPaymentError && handleCardPaymentError.code === piAuthenticationFailure
-        ? intl.formatMessage({ id: 'StripePaymentForm.handleCardPaymentError' })
-        : handleCardPaymentError
-        ? handleCardPaymentError.message
+      confirmCardPaymentError && confirmCardPaymentError.code === piAuthenticationFailure
+        ? intl.formatMessage({ id: 'StripePaymentForm.confirmCardPaymentError' })
+        : confirmCardPaymentError
+        ? confirmCardPaymentError.message
         : confirmPaymentError
         ? intl.formatMessage({ id: 'StripePaymentForm.confirmPaymentError' })
         : intl.formatMessage({ id: 'StripePaymentForm.genericError' });
@@ -410,6 +441,7 @@ class StripePaymentForm extends Component {
                 error={this.state.error}
                 paymentMethod={selectedPaymentMethod}
                 intl={intl}
+                useDefaultTestData={useDefaultTestData}
               />
             ) : (
               <React.Fragment>
@@ -423,6 +455,7 @@ class StripePaymentForm extends Component {
                   hasCardError={hasCardError}
                   error={this.state.error}
                   intl={intl}
+                  useDefaultTestData={useDefaultTestData}
                 />
               </React.Fragment>
             )}
@@ -513,7 +546,7 @@ StripePaymentForm.defaultProps = {
   hasHandledCardPayment: false,
   defaultPaymentMethod: null,
   initiateOrderError: null,
-  handleCardPaymentError: null,
+  confirmCardPaymentError: null,
   confirmPaymentError: null,
 };
 
@@ -523,7 +556,7 @@ StripePaymentForm.propTypes = {
   inProgress: bool,
   loadingData: bool,
   initiateOrderError: object,
-  handleCardPaymentError: object,
+  confirmCardPaymentError: object,
   confirmPaymentError: object,
   formId: string.isRequired,
   intl: intlShape.isRequired,

@@ -10,7 +10,7 @@ import { Form as FinalForm } from 'react-final-form';
 import classNames from 'classnames';
 import config from '../../config';
 import { Form, PrimaryButton, FieldTextInput, StripePaymentAddress } from '../../components';
-import css from './PaymentMethodsForm.css';
+import css from './PaymentMethodsForm.module.css';
 
 /**
  * Translate a Stripe API error object.
@@ -52,17 +52,17 @@ const stripeErrorTranslation = (intl, stripeError) => {
 const stripeElementsOptions = {
   fonts: [
     {
-      family: 'sofiapro',
+      family: 'poppins',
       fontSmoothing: 'antialiased',
       src:
-        'local("sofiapro"), local("SofiaPro"), local("Sofia Pro"), url("https://assets-sharetribecom.sharetribe.com/webfonts/sofiapro/sofiapro-medium-webfont.woff2") format("woff2")',
+        'local("poppins"), local("Poppins"), url("https://assets-sharetribecom.sharetribe.com/webfonts/poppins/Poppins-Medium.ttf") format("truetype")',
     },
   ],
 };
 
 const cardStyles = {
   base: {
-    fontFamily: '"sofiapro", Helvetica, Arial, sans-serif',
+    fontFamily: '"poppins", Helvetica, Arial, sans-serif',
     fontSize: '18px',
     fontSmoothing: 'antialiased',
     lineHeight: '24px',
@@ -146,16 +146,21 @@ class PaymentMethodsForm extends Component {
   }
   handleSubmit(values) {
     const { onSubmit, inProgress, formId } = this.props;
-    const cardInputNeedsAttention = !this.state.cardValueValid;
+    const cardInputNeedsAttention = !this.state.cardValueValid && !this.props.useDefaultTestData;
 
     if (inProgress || cardInputNeedsAttention) {
       // Already submitting or card value incomplete/invalid
       return;
     }
 
+    // Demo specific: If the user wants to use default test values,
+    // we should pass the default test token from Stripe instead of using
+    // card from Stripe Element (it's not possible to pass default value to that).
     const params = {
       stripe: this.stripe,
-      card: this.card,
+      card: this.props.useDefaultTestData
+        ? { payment_method: config.stripe.testData.basicTestPaymentMethodToken }
+        : this.card,
       formId,
       formValues: values,
     };
@@ -177,10 +182,11 @@ class PaymentMethodsForm extends Component {
       createStripeCustomerError,
       handleCardSetupError,
       form,
+      useDefaultTestData,
     } = formRenderProps;
 
     this.finalFormAPI = form;
-    const cardInputNeedsAttention = !this.state.cardValueValid;
+    const cardInputNeedsAttention = !this.state.cardValueValid && !useDefaultTestData;
     const submitDisabled = invalid || cardInputNeedsAttention || submitInProgress;
     const hasCardError = this.state.error && !submitInProgress;
     const classes = classNames(rootClassName || css.root, className);
@@ -219,19 +225,30 @@ class PaymentMethodsForm extends Component {
 
     return hasStripeKey ? (
       <Form className={classes} onSubmit={handleSubmit}>
-        <label className={css.paymentLabel} htmlFor={`${formId}-card`}>
-          <FormattedMessage id="PaymentMethodsForm.paymentCardDetails" />
-        </label>
+        {useDefaultTestData ? (
+          <FormattedMessage
+            id="PaymentMethodsForm.useDefaultTestCard"
+            values={{
+              last4: config.stripe.testData.basicTestCardDetails.attributes.card.last4Digits,
+            }}
+          />
+        ) : (
+          <>
+            <label className={css.paymentLabel} htmlFor={`${formId}-card`}>
+              <FormattedMessage id="PaymentMethodsForm.paymentCardDetails" />
+            </label>
 
-        <div
-          className={cardClasses}
-          id={`${formId}-card`}
-          ref={el => {
-            this.cardContainer = el;
-          }}
-        />
-        <div className={css.infoText}>{infoText}</div>
-        {hasCardError ? <span className={css.error}>{this.state.error}</span> : null}
+            <div
+              className={cardClasses}
+              id={`${formId}-card`}
+              ref={el => {
+                this.cardContainer = el;
+              }}
+            />
+            <div className={css.infoText}>{infoText}</div>
+            {hasCardError ? <span className={css.error}>{this.state.error}</span> : null}
+          </>
+        )}
         <div className={css.paymentAddressField}>
           <h3 className={css.billingHeading}>
             <FormattedMessage id="PaymentMethodsForm.billingDetails" />
@@ -283,7 +300,7 @@ PaymentMethodsForm.defaultProps = {
   className: null,
   rootClassName: null,
   inProgress: false,
-  handleSubmit: null,
+  onSubmit: null,
   addPaymentMethodError: null,
   deletePaymentMethodError: null,
   createStripeCustomerError: null,
@@ -294,7 +311,7 @@ PaymentMethodsForm.defaultProps = {
 PaymentMethodsForm.propTypes = {
   formId: string,
   intl: intlShape.isRequired,
-  handleSubmit: func,
+  onSubmit: func,
   addPaymentMethodError: object,
   deletePaymentMethodError: object,
   createStripeCustomerError: object,

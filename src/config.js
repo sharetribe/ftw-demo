@@ -1,6 +1,6 @@
 import * as custom from './marketplace-custom-config.js';
 import defaultLocationSearches from './default-location-searches';
-import { stripePublishableKey, stripeCountryDetails } from './stripe-config';
+import { defaultMCC, stripePublishableKey, stripeCountryDetails, testData } from './stripe-config';
 import { currencyConfiguration } from './currency-config';
 
 const env = process.env.REACT_APP_ENV;
@@ -32,14 +32,18 @@ const sortSearchByDistance = false;
 //
 // In a way, 'processAlias' defines which transaction process (or processes)
 // this particular web application is able to handle.
-const bookingProcessAlias = 'preauth-nightly-booking/release-1';
+const bookingProcessAlias = 'flex-default-process/release-1';
 
 // The transaction line item code for the main unit type in bookings.
 //
 // Possible values: ['line-item/night', 'line-item/day', 'line-item/units';]
 //
-// Note: translations will use different translation keys for night, day or unit
-// depending on the value chosen.
+// Note 1: This 'bookingUnitType' variable affects only web app.
+//         If you are using privileged transitions (which is used by the default process),
+//         you also need to configure unit type in API server: server/api-util/lineItems.js
+//
+// Note 2: Translations will use different translation keys for night, day or unit
+//         depending on the value chosen.
 const bookingUnitType = 'line-item/night';
 
 // Should the application fetch available time slots (currently defined as
@@ -116,11 +120,14 @@ const siteInstagramPage = null;
 // Facebook page is used in SEO schema (http://schema.org/Organization)
 const siteFacebookPage = 'https://www.facebook.com/Sharetribe/';
 
+// Social logins & SSO
+
+// Note: Facebook app id is also used for tracking:
 // Facebook counts shares with app or page associated by this id
 // Currently it is unset, but you can read more about fb:app_id from
 // https://developers.facebook.com/docs/sharing/webmasters#basic
 // You should create one to track social sharing in Facebook
-const facebookAppId = null;
+const facebookAppId = process.env.REACT_APP_FACEBOOK_APP_ID;
 
 const maps = {
   mapboxAccessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
@@ -219,8 +226,10 @@ const config = {
   currencyConfig,
   listingMinimumPriceSubUnits,
   stripe: {
+    defaultMCC: defaultMCC,
     publishableKey: stripePublishableKey,
     supportedCountries: stripeCountryDetails,
+    testData: testData,
   },
   canonicalRootURL,
   address: {

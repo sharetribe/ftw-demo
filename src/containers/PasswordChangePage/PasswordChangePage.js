@@ -19,8 +19,8 @@ import {
 import { PasswordChangeForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
 
-import { changePassword, changePasswordClear } from './PasswordChangePage.duck';
-import css from './PasswordChangePage.css';
+import { changePassword, changePasswordClear, resetPassword } from './PasswordChangePage.duck';
+import css from './PasswordChangePage.module.css';
 
 export const PasswordChangePageComponent = props => {
   const {
@@ -29,6 +29,9 @@ export const PasswordChangePageComponent = props => {
     currentUser,
     onChange,
     onSubmitChangePassword,
+    onResetPassword,
+    resetPasswordInProgress,
+    resetPasswordError,
     passwordChanged,
     scrollingDisabled,
     intl,
@@ -42,6 +45,9 @@ export const PasswordChangePageComponent = props => {
         currentUser={currentUser}
         onSubmit={onSubmitChangePassword}
         onChange={onChange}
+        onResetPassword={onResetPassword}
+        resetPasswordInProgress={resetPasswordInProgress}
+        resetPasswordError={resetPasswordError}
         inProgress={changePasswordInProgress}
         ready={passwordChanged}
       />
@@ -81,6 +87,8 @@ export const PasswordChangePageComponent = props => {
 PasswordChangePageComponent.defaultProps = {
   changePasswordError: null,
   currentUser: null,
+  resetPasswordInProgress: false,
+  resetPasswordError: null,
 };
 
 const { bool, func } = PropTypes;
@@ -93,6 +101,8 @@ PasswordChangePageComponent.propTypes = {
   onSubmitChangePassword: func.isRequired,
   passwordChanged: bool.isRequired,
   scrollingDisabled: bool.isRequired,
+  resetPasswordInProgress: bool,
+  resetPasswordError: propTypes.error,
 
   // from injectIntl
   intl: intlShape.isRequired,
@@ -104,6 +114,8 @@ const mapStateToProps = state => {
     changePasswordError,
     changePasswordInProgress,
     passwordChanged,
+    resetPasswordInProgress,
+    resetPasswordError,
   } = state.PasswordChangePage;
   const { currentUser } = state.user;
   return {
@@ -112,12 +124,15 @@ const mapStateToProps = state => {
     currentUser,
     passwordChanged,
     scrollingDisabled: isScrollingDisabled(state),
+    resetPasswordInProgress,
+    resetPasswordError,
   };
 };
 
 const mapDispatchToProps = dispatch => ({
   onChange: () => dispatch(changePasswordClear()),
   onSubmitChangePassword: values => dispatch(changePassword(values)),
+  onResetPassword: values => dispatch(resetPassword(values)),
 });
 
 const PasswordChangePage = compose(
