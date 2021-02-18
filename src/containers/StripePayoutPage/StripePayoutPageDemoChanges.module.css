@@ -1,8 +1,0 @@
-@import '../../styles/propertySets.css';
-
-.stripeTestDataButton {
-  @apply --marketplaceSmallFontStyles;
-  width: 100%;
-  min-height: 40px;
-  margin-top: 24px;
-}

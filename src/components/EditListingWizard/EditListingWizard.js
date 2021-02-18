@@ -34,7 +34,6 @@ import EditListingWizardTab, {
   PHOTOS,
 } from './EditListingWizardTab';
 import css from './EditListingWizard.module.css';
-import cssForDemo from './EditListingWizardDemoChanges.module.css';
 
 // Show availability calendar only if environment variable availabilityEnabled is true
 const availabilityMaybe = config.enableAvailability ? [AVAILABILITY] : [];
@@ -391,12 +390,6 @@ class EditListingWizard extends Component {
     const stripeInitialValuesForDemo = this.state.useDefaultTestData
       ? { accountType: stripeDefaultTestData.accountType, country: stripeDefaultTestData.country }
       : null;
-
-    const FillDemoDataButton = () => (
-      <Button className={cssForDemo.stripeTestDataButton} onClick={handleStripeTestData}>
-        <FormattedMessage id="EditListingWizard.fillInTestDetails" />
-      </Button>
-    );
     // Demo customization ends
 
     return (
@@ -453,7 +446,7 @@ class EditListingWizard extends Component {
                 <p className={css.modalMessage}>
                   <FormattedMessage id="EditListingWizard.payoutModalInfo" />
                 </p>
-                <FillDemoDataButton />
+
                 <StripeConnectAccountForm
                   disabled={formDisabled}
                   inProgress={payoutDetailsSaveInProgress}
@@ -473,6 +466,7 @@ class EditListingWizard extends Component {
                   stripeConnected={stripeConnected}
                   initialValues={stripeInitialValuesForDemo}
                   useDefaultTestData={this.state.useDefaultTestData}
+                  handleStripeTestData={handleStripeTestData}
                 >
                   {stripeConnected && !returnedAbnormallyFromStripe && showVerificationNeeded ? (
                     <StripeConnectAccountStatusBox

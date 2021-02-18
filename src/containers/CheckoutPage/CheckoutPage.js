@@ -35,6 +35,7 @@ import {
   AvatarMedium,
   BookingBreakdown,
   Logo,
+  ExternalLink,
   NamedLink,
   NamedRedirect,
   Page,
@@ -764,11 +765,23 @@ export class CheckoutPageComponent extends Component {
     // Demo customization begins
     const showFillDemoDataButton = showPaymentForm && !hasDefaultPaymentMethod;
 
+    const stripeTestDataLink = (
+      <ExternalLink href="https://stripe.com/docs/testing#cards">
+        <FormattedMessage id="PaymentMethodsPage.demoInfoTextLink" />
+      </ExternalLink>
+    );
+    const testButtonInfoText = (
+      <FormattedMessage id="PaymentMethodsPage.demoInfoText" values={{ stripeTestDataLink }} />
+    );
+
     const FillDemoDataButton = () =>
       showFillDemoDataButton ? (
-        <Button className={cssForDemo.stripeTestDataButton} onClick={this.handleInitialTestData}>
-          <FormattedMessage id="EditListingWizard.fillInTestDetails" />
-        </Button>
+        <div className={cssForDemo.stripeTestDataButtonWrapper}>
+          <Button className={cssForDemo.stripeTestDataButton} onClick={this.handleInitialTestData}>
+            <FormattedMessage id="EditListingWizard.fillInTestDetails" />
+          </Button>
+          <p className={cssForDemo.stripeTestDataButtonInfo}>{testButtonInfoText}</p>
+        </div>
       ) : null;
     // Demo customization ends
 

@@ -22,6 +22,7 @@ import {
 } from '../../components';
 
 import css from './StripeConnectAccountForm.module.css';
+import cssForDemo from './StripeConnectAccountFormDemoChanges.module.css';
 
 const supportedCountries = config.stripe.supportedCountries.map(c => c.code);
 
@@ -49,6 +50,7 @@ const CreateStripeAccountFields = props => {
     intl,
     currentUserId,
     useDefaultTestData,
+    handleStripeTestData,
   } = props;
 
   /*
@@ -97,11 +99,40 @@ const CreateStripeAccountFields = props => {
     })
   );
 
+  // Demo customization starts
+  const stripeTestDataLink = (
+    <ExternalLink href="https://stripe.com/docs/connect/testing#account-numbers">
+      <FormattedMessage id="StripeConnectAccountForm.demoInfoTextLink" />
+    </ExternalLink>
+  );
+  const testButtonInfoText = (
+    <FormattedMessage id="StripeConnectAccountForm.demoInfoText" values={{ stripeTestDataLink }} />
+  );
+
+  const stripeTestDataButtonForDemo = (
+    <>
+      <Button
+        className={cssForDemo.stripeTestDataButton}
+        onClick={handleStripeTestData}
+        disabled={!useDefaultTestData && !!values.country}
+        type="button"
+      >
+        <FormattedMessage id="EditListingWizard.fillInTestDetails" />
+      </Button>
+      <p className={cssForDemo.stripeTestDataButtonInfo}>{testButtonInfoText}</p>
+    </>
+  );
+
+  const disableCountrySelect = disabled || useDefaultTestData;
+  // Demo customization ends
+
   return (
     <div className={css.sectionContainer}>
       <h3 className={css.subTitle}>
         <FormattedMessage id="StripeConnectAccountForm.accountTypeTitle" />
       </h3>
+
+      {stripeTestDataButtonForDemo}
       <div className={css.radioButtonRow}>
         <FieldRadioButton
           id="individual"
@@ -116,13 +147,14 @@ const CreateStripeAccountFields = props => {
           label={companyAccountLabel}
           value="company"
           showAsRequired={showAsRequired}
+          disabled={useDefaultTestData}
         />
       </div>
 
       <FieldSelect
         id="country"
         name="country"
-        disabled={disabled}
+        disabled={disableCountrySelect}
         className={css.selectCountry}
         autoComplete="country"
         label={countryLabel}
@@ -227,7 +259,7 @@ const StripeConnectAccountFormComponent = props => {
   // For demo customization, we need to add useDefaultTestData
   // and currentUser to values we pass to onPayoutDetailsSubmit
   // function to prefill some fields in Stripe Connect Onboarding
-  const { currentUser, useDefaultTestData } = props;
+  const { currentUser, useDefaultTestData, handleStripeTestData } = props;
   const handleOnSubmitInDemo = values =>
     onSubmit({ ...values, currentUser, useDefaultTestData }, isUpdate);
 
@@ -295,6 +327,7 @@ const StripeConnectAccountFormComponent = props => {
             values={values}
             intl={intl}
             useDefaultTestData={useDefaultTestData}
+            handleStripeTestData={handleStripeTestData}
           />
         ) : (
           <UpdateStripeAccountFields
