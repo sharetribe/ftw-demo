@@ -160,9 +160,4 @@ const EmailVerificationPage = compose(
   injectIntl
 )(EmailVerificationPageComponent);
 
-EmailVerificationPage.loadData = (params, search) => {
-  const token = parseVerificationToken(search);
-  return verify(token);
-};
-
 export default EmailVerificationPage;

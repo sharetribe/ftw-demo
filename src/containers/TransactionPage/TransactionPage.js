@@ -31,8 +31,6 @@ import { TopbarContainer } from '../../containers';
 import {
   acceptSale,
   declineSale,
-  loadData,
-  setInitialValues,
   sendMessage,
   sendReview,
   fetchMoreMessages,
@@ -428,8 +426,5 @@ const TransactionPage = compose(
   ),
   injectIntl
 )(TransactionPageComponent);
-
-TransactionPage.loadData = loadData;
-TransactionPage.setInitialValues = setInitialValues;
 
 export default TransactionPage;
