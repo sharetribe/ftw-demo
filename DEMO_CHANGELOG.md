@@ -5,6 +5,11 @@ This file contains changes that are made solely to the demo FTW.
 
 ---
 
+## 2021-02-19
+
+- [fix] Fix using stored payment card after adding the Stripe test buttons
+  [#26](https://github.com/sharetribe/ftw-demo/pull/26)
+
 ## 2021-02-16
 
 - [add] Move Stripe test data button to StripeConnectAccountForm and add info texts to Stripe test
