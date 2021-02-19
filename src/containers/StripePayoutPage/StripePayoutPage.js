@@ -28,7 +28,7 @@ import {
 } from '../../components';
 import { StripeConnectAccountForm } from '../../forms';
 import { TopbarContainer } from '..';
-import { savePayoutDetails, loadData } from './StripePayoutPage.duck';
+import { savePayoutDetails } from './StripePayoutPage.duck';
 
 import css from './StripePayoutPage.module.css';
 
@@ -308,7 +308,5 @@ const StripePayoutPage = compose(
   ),
   injectIntl
 )(StripePayoutPageComponent);
-
-StripePayoutPage.loadData = loadData;
 
 export default StripePayoutPage;
