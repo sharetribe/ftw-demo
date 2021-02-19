@@ -328,7 +328,7 @@ class StripePaymentForm extends Component {
         ? {
             token: config.stripe.testData.basicTestCardToken,
           }
-        : card,
+        : this.card,
       formId,
       formValues: values,
       paymentMethod: getPaymentMethod(
