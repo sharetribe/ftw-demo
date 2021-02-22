@@ -99,7 +99,7 @@ module.exports = (reportUri, enforceSsl, reportOnly) => {
   const intercom = ['*.intercomcdn.com/', '*.intercom.io/', '*.intercomassets.com/'];
 
   const intercomScripts = scriptSrc.concat(intercom);
-  const intercomConnect = connectSrc.concat('*.intercom.io/');
+  const intercomConnect = connectSrc.concat('*.intercom.io/', 'wss://*.intercom.io');
   const intercomFont = fontSrc.concat('*.intercomcdn.com/');
 
   const customDirectives = {
