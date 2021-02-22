@@ -102,11 +102,13 @@ module.exports = (reportUri, enforceSsl, reportOnly) => {
   const intercomConnect = connectSrc.concat('*.intercom.io/', 'wss://*.intercom.io');
   const intercomFont = fontSrc.concat('*.intercomcdn.com/');
 
+  const customConnectSrc = intercomConnect.concat('*.sentry.io');
+
   const customDirectives = {
     // Example: Add custom directive override
     // imgSrc: exampleImgSrc,
     scriptSrc: intercomScripts,
-    connectSrc: intercomConnect,
+    connectSrc: customConnectSrc,
     fontSrc: intercomFont,
   };
 
