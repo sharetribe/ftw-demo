@@ -95,6 +95,8 @@ module.exports = (reportUri, enforceSsl, reportOnly) => {
   const { connectSrc = [self] } = defaultDirectives;
   const { scriptSrc = [self] } = defaultDirectives;
   const { fontSrc = [self] } = defaultDirectives;
+  const { imgSrc = [self] } = defaultDirectives;
+  const { mediaSrc = [self] } = defaultDirectives;
 
   const intercom = ['*.intercomcdn.com/', '*.intercom.io/', '*.intercomassets.com/'];
 
@@ -102,6 +104,8 @@ module.exports = (reportUri, enforceSsl, reportOnly) => {
   const intercomConnect = connectSrc.concat('*.intercom.io/', 'wss://*.intercom.io');
   const intercomFont = fontSrc.concat('*.intercomcdn.com/');
 
+  const intercomImages = imgSrc.concat('*.intercomassets.com/');
+  const intercomMedia = mediaSrc.concat('*.intercomcdn.com');
   const customConnectSrc = intercomConnect.concat('*.sentry.io');
 
   const customDirectives = {
@@ -110,6 +114,8 @@ module.exports = (reportUri, enforceSsl, reportOnly) => {
     scriptSrc: intercomScripts,
     connectSrc: customConnectSrc,
     fontSrc: intercomFont,
+    imgSrc: intercomImages,
+    mediaSrc: intercomMedia,
   };
 
   // ================ END CUSTOM CSP URLs ================ //
