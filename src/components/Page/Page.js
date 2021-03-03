@@ -67,8 +67,20 @@ class PageComponent extends Component {
     }
   }
 
+  hostnameToClientId = hostname => {
+    // Match the first sub domain for an UUID in form:
+    // 00000000-0000-0000-0000-000000000000.another-sub-domain.example.com
+    const match = /^(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\./.exec(hostname);
+    return match ? match[1] : null;
+  };
+
   getIntercomData = () => {
     const { isAuthenticated, currentUser } = this.props;
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : null;
+    const clientId = hostname ? this.hostnameToClientId(hostname) : null;
+
+    const clientIdMaybe = clientId ? { Flex_demo_client_id: clientId } : null;
+
     const userInfoMaybe =
       isAuthenticated && currentUser
         ? {
@@ -80,6 +92,7 @@ class PageComponent extends Component {
     const data = {
       app_id: process.env.REACT_APP_INTERCOM_APP_ID,
       ...userInfoMaybe,
+      ...clientIdMaybe,
       Flex_demo: true,
     };
 
