@@ -5,6 +5,11 @@ This file contains changes that are made solely to the demo FTW.
 
 ---
 
+## 2021-03-03
+
+- [add] Add new Intercom custom attribute Flex_demo_client_id, remove email verification modal
+  completely and small improvements to CSP [#29](https://github.com/sharetribe/ftw-demo/pull/29)
+
 ## 2021-02-19
 
 - [fix] Fix using stored payment card after adding the Stripe test buttons
