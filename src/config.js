@@ -77,7 +77,10 @@ if (typeof window !== 'undefined') {
   sdkClientId = hostnameToClientId(window.location.hostname);
 }
 
-const currency = process.env.REACT_APP_SHARETRIBE_MARKETPLACE_CURRENCY;
+// Marketplace currency.
+// It should match one of the currencies listed in currency-config.js
+const currencyConf = process.env.REACT_APP_SHARETRIBE_MARKETPLACE_CURRENCY;
+const currency = currencyConf ? currencyConf.toUpperCase() : currencyConf;
 
 // Currency formatting options.
 // See: https://github.com/yahoo/react-intl/wiki/API#formatnumber
