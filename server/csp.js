@@ -104,7 +104,7 @@ module.exports = (reportUri, enforceSsl, reportOnly) => {
   const intercomConnect = connectSrc.concat('*.intercom.io/', 'wss://*.intercom.io');
   const intercomFont = fontSrc.concat('*.intercomcdn.com/');
 
-  const intercomImages = imgSrc.concat('*.intercomassets.com/');
+  const intercomImages = imgSrc.concat('*.intercomcdn.com', '*.intercomassets.com/');
   const intercomMedia = mediaSrc.concat('*.intercomcdn.com');
   const customConnectSrc = intercomConnect.concat('*.sentry.io');
 
