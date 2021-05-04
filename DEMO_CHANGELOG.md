@@ -33,3 +33,10 @@ This file contains changes that are made solely to the demo FTW.
 
 - [fix] Login as user in demo with dynamic URLs
   [#12](https://github.com/sharetribe/ftw-demo/pull/12)
+
+
+## Retroactively added changes:
+
+- [change] Use Client Id through subdomain [#6](https://github.com/sharetribe/ftw-demo/pull/6)
+- [add] Book a call notification bar [#2](https://github.com/sharetribe/ftw-demo/pull/2)
+- [add] Intercom app [#1](https://github.com/sharetribe/ftw-demo/pull/1)
