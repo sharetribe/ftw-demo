@@ -71,10 +71,14 @@ const stripeElementsOptions = {
   ],
 };
 
+// card (being a Stripe Elements component), can have own styling passed to it.
+// However, its internal width-calculation seems to break if font-size is too big
+// compared to component's own width.
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 const cardStyles = {
   base: {
     fontFamily: '"poppins", Helvetica, Arial, sans-serif',
-    fontSize: '18px',
+    fontSize: isMobile ? '14px' : '18px',
     fontSmoothing: 'antialiased',
     lineHeight: '24px',
     letterSpacing: '-0.1px',
@@ -187,6 +191,30 @@ const getPaymentMethod = (selectedPaymentMethod, hasDefaultPaymentMethod) => {
     : selectedPaymentMethod;
 };
 
+// Should we show onetime payment fields and does StripeElements card need attention
+const checkOnetimePaymentFields = (
+  cardValueValid,
+  selectedPaymentMethod,
+  hasDefaultPaymentMethod,
+  hasHandledCardPayment,
+  useDefaultTestData
+) => {
+  const useDefaultPaymentMethod =
+    selectedPaymentMethod === 'defaultCard' && hasDefaultPaymentMethod;
+  // Billing details are known if we have already handled card payment or existing default payment method is used.
+  const billingDetailsKnown = hasHandledCardPayment || useDefaultPaymentMethod;
+
+  // If onetime payment is used, check that the StripeElements card has valid value.
+  const oneTimePaymentMethods = ['onetimeCardPayment', 'replaceCard'];
+  const useOnetimePaymentMethod = oneTimePaymentMethods.includes(selectedPaymentMethod);
+  const onetimePaymentNeedsAttention =
+    !billingDetailsKnown && !(useOnetimePaymentMethod && cardValueValid) && !useDefaultTestData;
+  return {
+    onetimePaymentNeedsAttention,
+    showOnetimePaymentFields: useOnetimePaymentMethod,
+  };
+};
+
 const initialState = {
   error: null,
   cardValueValid: false,
@@ -258,10 +286,10 @@ class StripePaymentForm extends Component {
       // EventListener is the only way to simulate breakpoints with Stripe.
       window.addEventListener('resize', () => {
         if (this.card) {
-          if (window.innerWidth < 1024) {
-            this.card.update({ style: { base: { fontSize: '18px', lineHeight: '24px' } } });
+          if (window.innerWidth < 768) {
+            this.card.update({ style: { base: { fontSize: '14px', lineHeight: '24px' } } });
           } else {
-            this.card.update({ style: { base: { fontSize: '20px', lineHeight: '32px' } } });
+            this.card.update({ style: { base: { fontSize: '18px', lineHeight: '24px' } } });
           }
         }
       });
@@ -273,6 +301,7 @@ class StripePaymentForm extends Component {
       this.card.removeEventListener('change', this.handleCardValueChange);
       this.card.unmount();
       this.card = null;
+      this.setState({ cardValueValid: false });
     }
     this.setState({ paymentMethod: changedTo });
   }
@@ -307,12 +336,19 @@ class StripePaymentForm extends Component {
       formId,
       hasHandledCardPayment,
       defaultPaymentMethod,
+      useDefaultTestData,
     } = this.props;
     const { initialMessage } = values;
     const { cardValueValid, paymentMethod } = this.state;
-    const billingDetailsKnown = hasHandledCardPayment || defaultPaymentMethod;
-    const onetimePaymentNeedsAttention =
-      !billingDetailsKnown && !cardValueValid && !this.props.useDefaultTestData;
+    const hasDefaultPaymentMethod = defaultPaymentMethod?.id;
+    const selectedPaymentMethod = getPaymentMethod(paymentMethod, hasDefaultPaymentMethod);
+    const { onetimePaymentNeedsAttention } = checkOnetimePaymentFields(
+      cardValueValid,
+      selectedPaymentMethod,
+      hasDefaultPaymentMethod,
+      hasHandledCardPayment,
+      useDefaultTestData
+    );
 
     if (inProgress || onetimePaymentNeedsAttention) {
       // Already submitting or card value incomplete/invalid
@@ -365,8 +401,18 @@ class StripePaymentForm extends Component {
 
     const ensuredDefaultPaymentMethod = ensurePaymentMethodCard(defaultPaymentMethod);
     const billingDetailsNeeded = !(hasHandledCardPayment || confirmPaymentError);
-    const billingDetailsKnown = hasHandledCardPayment || ensuredDefaultPaymentMethod;
-    const onetimePaymentNeedsAttention = !billingDetailsKnown && !this.state.cardValueValid;
+
+    const { cardValueValid, paymentMethod } = this.state;
+    const hasDefaultPaymentMethod = ensuredDefaultPaymentMethod.id;
+    const selectedPaymentMethod = getPaymentMethod(paymentMethod, hasDefaultPaymentMethod);
+    const { onetimePaymentNeedsAttention, showOnetimePaymentFields } = checkOnetimePaymentFields(
+      cardValueValid,
+      selectedPaymentMethod,
+      hasDefaultPaymentMethod,
+      hasHandledCardPayment,
+      useDefaultTestData
+    );
+
     const submitDisabled = invalid || onetimePaymentNeedsAttention || submitInProgress;
     const hasCardError = this.state.error && !submitInProgress;
     const hasPaymentErrors = confirmCardPaymentError || confirmPaymentError;
@@ -418,19 +464,11 @@ class StripePaymentForm extends Component {
     );
 
     const hasStripeKey = config.stripe.publishableKey;
-    const showPaymentMethodSelector = ensuredDefaultPaymentMethod.id;
-    const selectedPaymentMethod = getPaymentMethod(
-      this.state.paymentMethod,
-      showPaymentMethodSelector
-    );
-    const showOnetimePaymentFields = ['onetimeCardPayment', 'replaceCard'].includes(
-      selectedPaymentMethod
-    );
     return hasStripeKey ? (
       <Form className={classes} onSubmit={handleSubmit} enforcePagePreloadFor="OrderDetailsPage">
         {billingDetailsNeeded && !loadingData ? (
           <React.Fragment>
-            {showPaymentMethodSelector ? (
+            {hasDefaultPaymentMethod ? (
               <PaymentMethodSelector
                 cardClasses={cardClasses}
                 formId={formId}
