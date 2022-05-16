@@ -6,6 +6,13 @@ import { currencyConfiguration } from './currency-config';
 const env = process.env.REACT_APP_ENV;
 const dev = process.env.REACT_APP_ENV === 'development';
 
+// CDN assets for the app. Configurable through Flex Console.
+// Currently, only translation.json is available.
+// Note: the path must match the path defined in Asset Delivery API
+const appCdnAssets = {
+  translations: 'content/translations.json',
+};
+
 // If you want to change the language, remember to also change the
 // locale data and the messages in the app.js file.
 const locale = 'en';
@@ -23,7 +30,7 @@ const i18n = {
 // NOTE: If this is set to true add parameter 'origin' to every location in default-location-searches.js
 // Without the 'origin' parameter, search will not work correctly
 // NOTE: Keyword search and ordering search results by distance can't be used at the same time. You can turn keyword
-// search off by changing the keywordFilterConfig parameter active to false in marketplace-custom-config.js
+// search off by removing keyword filter config from filters array in marketplace-custom-config.js
 const sortSearchByDistance = false;
 
 // API supports custom processes to be used in booking process.
@@ -62,6 +69,7 @@ const dayCountAvailableForBooking = 90;
 // exposing server secrets to the client side.
 // const sdkClientId = process.env.REACT_APP_SHARETRIBE_SDK_CLIENT_ID;
 const sdkBaseUrl = process.env.REACT_APP_SHARETRIBE_SDK_BASE_URL;
+const sdkAssetCdnBaseUrl = process.env.REACT_APP_SHARETRIBE_SDK_ASSET_CDN_BASE_URL;
 const sdkTransitVerbose = process.env.REACT_APP_SHARETRIBE_SDK_TRANSIT_VERBOSE === 'true';
 
 const hostnameToClientId = hostname => {
@@ -213,6 +221,7 @@ const maps = {
 const config = {
   env,
   dev,
+  appCdnAssets,
   locale,
   bookingProcessAlias,
   bookingUnitType,
@@ -222,6 +231,7 @@ const config = {
   sdk: {
     clientId: sdkClientId,
     baseUrl: sdkBaseUrl,
+    assetCdnBaseUrl: sdkAssetCdnBaseUrl,
     transitVerbose: sdkTransitVerbose,
   },
   sortSearchByDistance,

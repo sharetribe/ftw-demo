@@ -206,12 +206,8 @@ h6 {
   @apply --marketplaceH6FontStyles;
 }
 
-input,
-textarea,
-select,
 li {
   @apply --marketplaceDefaultFontStyles;
-  line-height: 24px;
 }
 
 p,
@@ -256,14 +252,17 @@ button {
 
 select {
   @apply --marketplaceSelectStyles;
+  @apply --marketplaceInputFontStyles;
 }
 
 input {
   @apply --marketplaceInputStyles;
+  @apply --marketplaceInputFontStyles;
 }
 
 textarea {
   @apply --marketplaceInputStyles;
+  @apply --marketplaceInputFontStyles;
 
   /* Todo: All textareas are using auto-sizing extension which currently calculates required space incorrectly when box-sixing is "border-box" */
   box-sizing: content-box;
