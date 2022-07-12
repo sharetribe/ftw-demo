@@ -5,6 +5,10 @@ This file contains changes that are made solely to the demo FTW.
 
 ---
 
+## 2021-07-12
+
+- Updated to FTW-daily v9 and updated demo-specific @apply declaration blocks to use global classes.
+
 ## 2021-03-03
 
 - [add] Add new Intercom custom attribute Flex_demo_client_id, remove email verification modal
@@ -44,5 +48,4 @@ This file contains changes that are made solely to the demo FTW.
 
 ## 2019-05-06
 
-- [add] Add Intercom chat widget
-  [#1](https://github.com/sharetribe/ftw-demo/pull/1)
+- [add] Add Intercom chat widget [#1](https://github.com/sharetribe/ftw-demo/pull/1)
