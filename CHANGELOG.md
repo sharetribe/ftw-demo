@@ -14,6 +14,56 @@ way to update this template, but currently, we follow a pattern:
 
 ## Upcoming version 2022-XX-XX
 
+## [v9.0.0] 2022-07-11
+
+This is a major release since it includes a major update to sharetribe-scripts aka our fork of
+Create React App.It includes major update to Webpack (v4 > v5) and PostCSS (v7 > v8). These caused
+some advanced CSS syntax to be invalid - and therefore some changes must be done to CSS files.
+
+- CSS Property Sets are deprecated and the related file is removed from the codebase
+- Custom media queries file need to be imported in all the files, that use them.
+
+Read more from PR: https://github.com/sharetribe/ftw-daily/pull/1531
+
+Changes:
+
+- [change] sharetribe-scripts is updated to v6.0.0. This causes a new major release for FTW
+  templates. Because most of the CSS files need to be updated!
+  [#1531](https://github.com/sharetribe/ftw-daily/pull/1531)
+
+- [change] ImageCarousel uses react-image-gallery. It renders all the images early on and supports
+  touch swipes. [#1529](https://github.com/sharetribe/ftw-daily/pull/1529)
+- [fix] Fixing a small typo. [#1518](https://github.com/sharetribe/ftw-daily/pull/1518)
+
+## [v8.6.2] 2022-05-19
+
+- [fix] There was also invalid characters (zero-width space) on added directive
+  [#1517](https://github.com/sharetribe/ftw-daily/pull/1517)
+
+  [v8.6.2]: https://github.com/sharetribe/ftw-daily/compare/v8.6.1...v8.6.2
+
+## [v8.6.1] 2022-05-19
+
+- [fix] undefined REACT_APP_GOOGLE_ANALYTICS_ID caused an error.
+  [#1516](https://github.com/sharetribe/ftw-daily/pull/1516)
+
+  [v8.6.1]: https://github.com/sharetribe/ftw-daily/compare/v8.6.0...v8.6.1
+
+## [v8.6.0] 2022-05-19
+
+Note: this caused an error. Use v8.6.2 instead.
+
+- [change] Google Analytics: remove Universal Analytics and start supporting GA4.
+
+  NOTE: you need to update the Google Analytics id to GA4's id (starting with 'G-' prefix).
+
+  [#1508](https://github.com/sharetribe/ftw-daily/pull/1508)
+
+- [change] Update some outdated dependencies.
+  [#1514](https://github.com/sharetribe/ftw-daily/pull/1514)
+
+  [v8.6.0]: https://github.com/sharetribe/ftw-daily/compare/v8.5.0...v8.6.0
+
 ## [v8.5.0] 2022-05-16
 
 - [add] Add support for hosted translations.
