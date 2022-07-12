@@ -1,11 +1,11 @@
-@import '../../styles/propertySets.css';
+@import '../../styles/customMediaQueries.css';
 
 .stripeTestDataButtonWrapper {
   margin-bottom: 16px;
 }
 
 .stripeTestDataButton {
-  @apply --marketplaceSmallFontStyles;
+  composes: marketplaceSmallFontStyles from global;
   width: 100%;
   min-height: 40px;
 }
