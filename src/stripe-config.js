@@ -233,7 +233,7 @@ export const stripeCountryDetails = [
   {
     // Norway
     code: 'NO',
-    currency: 'EUR',
+    currency: 'NOK',
     accountConfig: {
       iban: true,
     },
