@@ -14,7 +14,24 @@ way to update this template, but currently, we follow a pattern:
 
 ## Upcoming version 2022-XX-XX
 
+## [v10.0.0] 2023-02-14
+
+- [add] This adds support for page asset files that can be created in Console. These asset files are
+  taken into use for
+
+  - LandingPage
+  - TermsOfServicePage
+  - PrivacyPolicyPage
+  - AboutPage
+  - and other static pages can also be created through Console (they'll be visible in route:
+    /p/:asset-name/)
+
+  [#1520](https://github.com/sharetribe/ftw-daily/pull/1520)
+
+  [v10.0.0]: https://github.com/sharetribe/ftw-daily/compare/v9.1.0.../v10.0.0
+
 ## [v9.1.0] 2023-02-07
+
 - [change] Norway's stripe config should use NOK not EUR.
   [#1579](https://github.com/sharetribe/ftw-daily/pull/1579)
 - [delete] Update README.md after changes in [#1555].

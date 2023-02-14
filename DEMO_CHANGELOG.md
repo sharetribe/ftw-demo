@@ -5,6 +5,11 @@ This file contains changes that are made solely to the demo FTW.
 
 ---
 
+## 2023-02-14
+
+- [add] TopbarNotification component to PageBuilder
+- [change] LandingPage/FallbackPage.js: different microcopy.
+
 ## 2021-07-12
 
 - Updated to FTW-daily v9 and updated demo-specific @apply declaration blocks to use global classes.
