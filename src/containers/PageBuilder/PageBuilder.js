@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Footer as FooterContent } from '../../components/index.js';
+import { Footer as FooterContent, TopbarNotification } from '../../components/index.js';
+
 import { TopbarContainer } from '../../containers/index.js';
 
 import { validProps } from './Field';
@@ -98,6 +99,7 @@ const PageBuilder = props => {
           return (
             <>
               <Topbar as="header" className={css.topbar}>
+                <TopbarNotification />
                 <TopbarContainer />
               </Topbar>
               <Main as="main" className={css.main}>
