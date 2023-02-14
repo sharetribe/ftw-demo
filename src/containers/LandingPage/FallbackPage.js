@@ -1,4 +1,5 @@
 import React from 'react';
+import { ExternalLink } from '../../components';
 import PageBuilder from '../PageBuilder/PageBuilder';
 import css from './FallbackPage.module.css';
 
@@ -30,10 +31,18 @@ const SectionMaintenanceMode = props => {
   return (
     <section id={sectionId} className={css.root}>
       <div className={css.content}>
-        <h1>Maintenance mode</h1>
+        <h1>You need to add a landing page to your demo marketplace </h1>
         <p>
-          The marketplace is not fully operational at the moment. Try refreshing the page and if
-          that does not solve the issue, contact the marketplace admins.
+          The landing page of your Flex Demo Marketplace is now powered by Pages, which allows you
+          to manage your static content pages without coding in Console. To refresh your Demo
+          Marketplace, you need to go to Pages in your Flex Console and click the button “Import
+          default pages”. You can then make adjustments to your Demo Marketplace and see how they
+          look on the page.
+        </p>
+        <p>
+          <ExternalLink href="https://flex-console.sharetribe.com/a/content/pages">
+            Go to Pages in Console
+          </ExternalLink>
         </p>
       </div>
     </section>
